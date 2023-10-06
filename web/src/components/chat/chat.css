@@ -1,0 +1,25 @@
+.chatCont {
+    display: flex;
+    flex-direction: column;
+    justify-content: right;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.searchButton {
+    width: fit-content !important;
+    height: 3em;
+    font-size: 0.8em;
+    color: #252525;
+    background-color: #28435200;
+    width: fit-content !important;
+    border: 0px;
+    font-size: 1em;
+    margin: 0em !important;
+    border-radius: 5px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+}

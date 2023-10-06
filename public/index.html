@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    </meta>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    </meta>
+    <title>Posts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    </meta>
+    <!-- icons cdn -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    </link>
+    <!-- font cdn -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- css -->
+    <link rel="stylesheet" type="text/css" href="./posts/main.css">
+    </link>
+    <!-- bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+</head>
+
+<body>
+    <row class="space-around">
+        <h1 class="bi bi-activity green"> Posts</h1>
+        <div class="dropdown">
+            <button class="drop-down" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <h2 class="bi bi-three-dots-vertical dots"></h2>
+            </button>
+            <ul class="dropdown-menu">
+                <li class="list"><a class="drop-down-options" type="button" onclick="deleteAllPosts()"><i class="bi bi-trash-fill icon"></i>Delete All</a></li>
+                <li class="list"><a target="_blank" href="https://github.com/ahadsts9901" class="drop-down-options" type="button"><i class="bi bi-github icon"></i>GitHub</a></li>
+                <li class="list"><a target="_blank" href="https://linkedin.com/in/muhammad-ahad-3136b1236" class="drop-down-options" type="button"><i class="bi bi-linkedin icon"></i>LinkedIn</a></li>
+                <li class="list"><a target="_blank" href="https://wa.me/+923130019086" class="drop-down-options" type="button"><i class="bi bi-whatsapp icon"></i>WhatsApp</a></li>
+                <li class="list"><a target="_blank" href="https://www.facebook.com/abdulahad.ansari.1481/" class="drop-down-options" type="button"><i class="bi bi-facebook icon"></i>Facebook</a></li>
+                <li class="list"><a target="_blank" href="https://www.youtube.com/@AhadSTS/" class="drop-down-options" type="button"><i class="bi bi-youtube icon"></i>YouTube</a></li>
+            </ul>
+        </div>
+        <button class="logout" onclick="logout(event)">Log Out</button>
+    </row>
+
+    <form onsubmit="createPost(event)">
+        <h2>Create New Post</h2>
+        <label for="title" class="green">Title</label>
+        <input required id="title" type="text" placeholder="Enter Title" class="input">
+        <label for="text" class="green">Text</label>
+        <textarea required id="text" type="text" placeholder="Enter Text" class="input"></textarea>
+        <button type="submit" class="button">Post</button>
+    </form>
+    <h2 class="green">Posts</h2>
+    <div class="result">
+
+    </div>
+
+    <!-- <p class="center">Thanks For Visiting Regards! Muhammad Ahad&copy;</p> -->
+    <!-- moment js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <!-- nanoid -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/nanoid"></script> -->
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.js"></script>
+    <!-- sweet alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- sweet alert buttons and others styling -->
+    <style>
+        .swal2-confirm:focus,
+        .swal2-deny:focus,
+        .swal2-cancel:focus,
+        .swal2-input:focus {
+            box-shadow: 0 0 4px #24232c !important;
+        }
+        
+        .swal2-input {
+            border: 0px solid #24232c !important;
+            width: 80%;
+            margin: 1em auto;
+            padding: 0.5em;
+        }
+        
+        .swal2-confirm {
+            background-color: #24232c;
+        }
+        
+        div:where(.swal2-container) div:where(.swal2-loader) {
+            border-color: #24232c #fff;
+        }
+    </style>
+    <!-- javascript -->
+    <script src="./posts//main.js"></script>
+    <!-- bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</body>
+
+</html>
