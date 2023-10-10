@@ -633,6 +633,10 @@ div:where(.swal2-container) div:where(.swal2-loader) {
     display: none;
 }
 
+.pencil{
+    margin-left: 1em;
+}
+
 /* loader */
 
 .loader {

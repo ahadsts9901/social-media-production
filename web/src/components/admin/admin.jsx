@@ -17,7 +17,7 @@ const Admin = () => {
   }, []);
 
   const renderAdminPost = () => {
-    axios.get(`/api/v1/posts/`)
+    axios.get(`/api/v1/feed/`)
       .then((response) => {
         // Handle the data returned from the API
         const userAllPosts = response.data;
@@ -136,7 +136,9 @@ const Admin = () => {
       <h2 className="adminHeading">Admin Dashboard</h2>
       <div className="result">
         {!adminPosts ? <h2 className='noPostMesage'>No Post Found</h2> : (adminPosts.length === 0 ? (
-          <div className="loadContainer"><span class="loader"></span></div>
+          <div className="loadContainer">
+            <h2 className='noPostMesage'>No Post Found</h2>
+          </div>
         ) : (
           adminPosts.map((post, index) => (
             <UserPost key={index} title={post.title} text={post.text} time={post.time} postId={post._id} del={deletePost} edit={editPost} />

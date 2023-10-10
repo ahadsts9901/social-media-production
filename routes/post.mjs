@@ -38,7 +38,7 @@ router.post('/post', async (req, res, next) => {
 })
 
 //GET  ALL   POSTS   /api/v1/post/:postId
-router.get('/posts', async (req, res, next) => {
+router.get('/feed', async (req, res, next) => {
     try {
         const cursor = col.find({}).sort({ _id: -1 });
         let results = await cursor.toArray();
@@ -83,7 +83,6 @@ router.delete('/posts/all', async (req, res, next) => {
         console.error(error);
     }
 });
-
 
 // DELETE  /api/v1/post/:postId
 router.delete('/post/:postId', async (req, res, next) => {
@@ -130,10 +129,15 @@ router.put('/post/:postId', async (req, res, next) => {
 
 // GET ALL POSTS FOR A SPECIFIC EMAIL /api/v1/posts/:email
 router.get('/posts/:userId', async (req, res, next) => {
-    const userId = new ObjectId(req.params.userId);
+    const userId = req.params.userId;
+
+    if (!ObjectId.isValid(userId)) {
+        res.status(403).send(`Invalid user id`);
+        return;
+    }
 
     try {
-        const cursor = col.find({ userId: userId }).sort({ _id: -1 });
+        const cursor = col.find({ userId: new ObjectId(userId) }).sort({ _id: -1 });
         const results = await cursor.toArray();
 
         console.log(results);
@@ -148,26 +152,28 @@ router.get('/posts/:userId', async (req, res, next) => {
 
 router.get('/profile/:userId', async (req, res, next) => {
 
-    const userId = req.params.userId;
+    const userId = req.params.userId || req.body.decoded.userId
 
-    if (!ObjectId.isValid(userId) && userId !== undefined) {
+    if (!ObjectId.isValid(userId)) {
         res.status(403).send(`Invalid user id`);
         return;
     }
 
     try {
         let result = await userCollection.findOne({ _id: new ObjectId(userId) });
-        console.log("result: ", result);
-        console.log("userId:");
+        console.log("result: ", result); // [{...}] []
         res.send({
             message: 'profile fetched',
             data: {
-                firstName: result?.firstName,
-                lastName: result?.lastName,
-                email: result?.email,
-            }
+                isAdmin: result.isAdmin,
+                firstName: result.firstName,
+                lastName: result.lastName,
+                email: result.email,
+                userId: result._id,
+            },
+            id: userId
         });
-        // res.send(userId)
+
     } catch (e) {
         console.log("error getting data mongodb: ", e);
         res.status(500).send('server error, please try later');
@@ -176,7 +182,7 @@ router.get('/profile/:userId', async (req, res, next) => {
 
 // ping auth
 
-router.get('/ping', async (req, res, next) => {
+router.use('/ping', async (req, res, next) => {
 
     try {
         let result = await userCollection.findOne({ email: req.body.decoded.email });
@@ -194,7 +200,7 @@ router.get('/ping', async (req, res, next) => {
 
     } catch (e) {
         console.log("error getting data mongodb: ", e);
-        res.status(500).send('server error, please try later');
+        res.status(401).send('UnAuthorized');
     }
 })
 

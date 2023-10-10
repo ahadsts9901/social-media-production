@@ -140,10 +140,7 @@ router.post('/signup', async (req, res, next) => {
 
 
 router.post("/logout", async (req, res, next) => {
-    res.cookie('token', "", {
-        httpOnly: true,
-        secure: true,
-    });
+    res.clearCookie("token")
     res.send({ message: 'Logout successful' });
 });
 

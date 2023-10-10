@@ -3,7 +3,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import './profile.css';
 import { UserPost } from '../userPost/userPost';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Post } from "../post/post"
+import { useParams } from 'react-router-dom';
 import { GlobalContext } from '../../context/context';
 import { PencilFill } from 'react-bootstrap-icons'
 
@@ -14,16 +15,17 @@ const Profile = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [profile, setProfile] = useState([]);
 
-  const userId = state.user.userId
+  // const userId = state.user.userId
   const { userParamsId } = useParams()
 
   useEffect(() => {
     renderCurrentUserPost();
     getProfile()
-  }, [userId, userParamsId]);
+  }, [
+    userParamsId]);
 
   const renderCurrentUserPost = () => {
-    axios.get(`/api/v1/posts/${userId}`)
+    axios.get(`/api/v1/posts/${userParamsId || ""}`)
       .then((response) => {
         // Handle the data returned from the API
         const userAllPosts = response.data;
@@ -40,8 +42,7 @@ const Profile = () => {
   const getProfile = async () => {
     try {
       const response = await axios.get(`/api/v1/profile/${userParamsId || ""}`);
-      console.log(response.data);
-      setProfile(response.data);
+      setProfile(response.data.data);
     } catch (error) {
       console.log(error.data);
     }
@@ -170,7 +171,6 @@ const Profile = () => {
             dispatch({
               type: 'USER_LOGOUT',
             });
-
             window.location.pathname = '/login';
             return true;
           })
@@ -192,23 +192,40 @@ const Profile = () => {
     <div className='posts'>
 
       <div className="profile">
-        <img className='profileIMG' src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
+        <img className='profileIMG' src={`https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`} />
 
-        <h2 className='profileName'><PencilFill className='editName' /> </h2>
+        <h2 className='profileName'>{profile.firstName} {profile.lastName}
 
-        <button className='logOutButton' onClick={logOut}>Log Out</button>
+          {(state.user.userId === profile.userId) ? <PencilFill className='pencil' /> : null}
+        </h2>
+
+
+        {(state.user.userId === profile.userId) ?
+          <button className='logOutButton' onClick={logOut}>Log Out</button>
+          : null}
         <div className='profileImageContainer'>
-          <label className='editIMG' htmlFor="profileImage"><PencilFill /></label>
+          <label className='editIMG' htmlFor="profileImage">
+
+            {(state.user.userId === profile.userId) ? <PencilFill className='pencil' /> : null}
+
+          </label>
           <input type="file" className="file hidden" id="profileImage" accept="image/*"></input>
         </div>
       </div>
 
       <div className="result">
         {!userPosts ? <h2 className="noPostMessage">No Post Found</h2> : (userPosts.length === 0 ? (
-          <div className="loadContainer"><span class="loader"></span></div>
+          <div className="loadContainer">
+            <h2 className="noPostMessage">No Post Found</h2>
+          </div>
         ) : (
           userPosts.map((post, index) => (
-            <UserPost key={index} title={post.title} text={post.text} time={post.time} postId={post._id} del={deletePost} edit={editPost} />
+
+            (state.user.userId === profile.userId || state.isAdmin == true) ?
+              (<UserPost key={index} title={post.title} text={post.text} time={post.time} postId={post._id} del={deletePost} edit={editPost} />)
+              :
+              (<Post key={index} title={post.title} text={post.text} time={post.time} postId={post._id} />)
+
           ))
         ))}
       </div>

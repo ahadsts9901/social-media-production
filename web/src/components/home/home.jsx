@@ -21,7 +21,7 @@ const Home = () => {
 
   const renderPost = () => {
     axios
-      .get(`/api/v1/posts`)
+      .get(`/api/v1/feed`)
       .then(function (response) {
         let fetchedPosts = response.data;
         // console.log("fetched posts", fetchedPosts);
@@ -41,7 +41,9 @@ const Home = () => {
   return (
     <div className="result">
       {!posts ? <h2 className='noPostMessage'> No Post Found </h2> : (posts.length === 0 ? (
-        <div className="loadContainer"><span class="loader"></span></div>
+        <div className="loadContainer">
+          <h2 className="noPostMessage">No Post Found</h2>
+        </div>
       ) : (
         posts.map((post, index) => (
           <Post key={index} title={post.title} text={post.text} time={post.time} postId={post._id} />
