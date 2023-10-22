@@ -123,3 +123,7 @@
         font-size: 1.2em;
     }
 }
+
+.unAuthNav{
+    padding: 0.5em 1.5em !important;
+}

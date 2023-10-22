@@ -6,7 +6,7 @@ const UnAuthNavbar = () => {
 
     return (
         <div className="navBar">
-            <div className="navbarTop">
+            <div className="navbarTop unAuthNav">
                 <h1>
                     <span>WE</span>
                     <span className="black"> App</span>

@@ -252,4 +252,66 @@ router.get("/search", async (req, res) => {
     }
 });
 
+router.post('/post/:postId/dolike', async (req, res, next) => {
+
+    if (!ObjectId.isValid(req.params.postId)) {
+        res.status(403).send(`Invalid post id`);
+        return;
+    }
+
+    try {
+        const doLikeResponse = await col.updateOne(
+            { _id: new ObjectId(req.params.postId) },
+            {
+                $addToSet: {
+                    likes: {
+                        userId : new ObjectId(req.body.userId),
+                        firstName : req.body.decoded.firstName,
+                        lastName : req.body.decoded.lastName,
+                    }
+                }
+            }
+        );
+        console.log("doLikeResponse: ", doLikeResponse);
+        res.send('like done');
+    } catch (e) {
+        console.log("error like post mongodb: ", e);
+        res.status(500).send('server error, please try later');
+    }
+})
+
+router.delete('/post/:postId/undolike', async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const userId = req.body.userId;
+
+        // Check if the post ID is valid
+        if (!ObjectId.isValid(postId)) {
+            res.status(403).send('Invalid post id');
+            return;
+        }
+
+        // Update the post to remove the like by the specified user
+        const updateResult = await col.updateOne(
+            { _id: new ObjectId(postId) },
+            {
+                $pull: {
+                    likes: { userId: new ObjectId(userId) }
+                }
+            }
+        );
+
+        if (updateResult.modifiedCount === 0) {
+            res.status(404).send('Post not found');
+            return;
+        }
+
+        res.status(200).send('Like removed successfully');
+    } catch (error) {
+        console.error('Error removing like:', error);
+        res.status(500).send('Server error, please try later');
+    }
+});
+
+
 export default router

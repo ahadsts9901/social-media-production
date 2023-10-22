@@ -46,7 +46,7 @@ const Home = () => {
         </div>
       ) : (
         posts.map((post, index) => (
-          <Post key={index} title={post.title} text={post.text} time={post.time} postId={post._id} />
+          <Post key={index} title={post.title} text={post.text} time={post.time} postId={post._id} likedBy={post.likes} />
         ))
       ))}
     </div>

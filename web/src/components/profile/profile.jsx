@@ -45,6 +45,7 @@ const Profile = () => {
       setProfile(response.data.data);
     } catch (error) {
       console.log(error.data);
+      setProfile("noUser")
     }
   }
 
@@ -191,44 +192,51 @@ const Profile = () => {
   return (
     <div className='posts'>
 
-      <div className="profile">
-        <img className='profileIMG' src={`https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`} />
+      {profile === "noUser" ? (<div className='noUser'>No User Found</div>) :
 
-        <h2 className='profileName'>{profile.firstName} {profile.lastName}
+        <>
+          <div className="profile">
+            <img className='profileIMG' src={`https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`} />
 
-          {(state.user.userId === profile.userId) ? <PencilFill className='pencil' /> : null}
-        </h2>
+            <h2 className='profileName'>{profile.firstName} {profile.lastName}
+
+              {(state.user.userId === profile.userId) ? <PencilFill className='pencil' /> : null}
+            </h2>
 
 
-        {(state.user.userId === profile.userId) ?
-          <button className='logOutButton' onClick={logOut}>Log Out</button>
-          : null}
-        <div className='profileImageContainer'>
-          <label className='editIMG' htmlFor="profileImage">
+            {(state.user.userId === profile.userId) ?
+              <button className='logOutButton' onClick={logOut}>Log Out</button>
+              : null}
+            <div className='profileImageContainer'>
+              <label className='editIMG' htmlFor="profileImage">
 
-            {(state.user.userId === profile.userId) ? <PencilFill className='pencil' /> : null}
+                {(state.user.userId === profile.userId) ? <PencilFill className='pencil' /> : null}
 
-          </label>
-          <input type="file" className="file hidden" id="profileImage" accept="image/*"></input>
-        </div>
-      </div>
-
-      <div className="result">
-        {!userPosts ? <h2 className="noPostMessage">No Post Found</h2> : (userPosts.length === 0 ? (
-          <div className="loadContainer">
-            <h2 className="noPostMessage">No Post Found</h2>
+              </label>
+              <input type="file" className="file hidden" id="profileImage" accept="image/*"></input>
+            </div>
           </div>
-        ) : (
-          userPosts.map((post, index) => (
 
-            (state.user.userId === profile.userId || state.isAdmin == true) ?
-              (<UserPost key={index} title={post.title} text={post.text} time={post.time} postId={post._id} del={deletePost} edit={editPost} />)
-              :
-              (<Post key={index} title={post.title} text={post.text} time={post.time} postId={post._id} />)
+          <div className="result">
+            {!userPosts ? <h2 className="noPostMessage">No Post Found</h2> : (userPosts.length === 0 ? (
+              <div className="loadContainer">
+                <h2 className="noPostMessage">No Post Found</h2>
+              </div>
+            ) : (
+              userPosts.map((post, index) => (
 
-          ))
-        ))}
-      </div>
+                (state.user.userId === profile.userId || state.isAdmin == true) ?
+                  (<UserPost key={index} title={post.title} text={post.text} time={post.time} postId={post._id} del={deletePost} edit={editPost} likedBy={post.likes} />)
+                  :
+                  (<Post key={index} title={post.title} text={post.text} time={post.time} postId={post._id} likedBy={post.likes} />)
+
+              ))
+            ))}
+          </div>
+        </>
+
+      }
+
     </div>
   );
 };

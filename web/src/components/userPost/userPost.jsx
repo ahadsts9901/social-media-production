@@ -1,9 +1,29 @@
 import "./userPost.css";
 import moment from "moment";
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
+import axios from "axios"
+import { GlobalContext } from '../../context/context';
 
 const UserPost = (props) => {
+
+  let { state, dispatch } = useContext(GlobalContext);
+
+  useEffect(() => {
+
+    if (!Array.isArray(props.likedBy)) {
+        props.likedBy = [];
+    }
+
+    const userHasLiked = props.likedBy.some(
+      (likeUser) => likeUser.userId === state.user.userId
+    );
+
+    setIsLike(userHasLiked);
+  }, [props.likedBy, state.user.userId]);
+
   const [showFullPost, setShowFullPost] = useState(false);
+  const [isLike, setIsLike] = useState(false);
+
   const formattedTime = moment(props.time).fromNow();
   const fullText = props.text;
   const splittedText = props.text.split(" ").slice(0, 40).join(" ");
@@ -11,6 +31,73 @@ const UserPost = (props) => {
   const toggleShowFullPost = () => {
     setShowFullPost(!showFullPost);
   };
+
+  const doLike = async (_id, event) => {
+    try {
+        // Create an empty array if props.likedBy is undefined
+        if (!Array.isArray(props.likedBy)) {
+            props.likedBy = [];
+        }
+
+        // Debugging: Log the values to understand what's happening
+        // console.log("state.user.userId:", state.user.userId);
+        // console.log("props.likedBy:", props.likedBy);
+
+        const userHasLiked = props.likedBy.some((likeUser) => likeUser.userId === state.user.userId);
+
+        if (userHasLiked) {
+            // console.log("You've already liked this post.");
+            undoLike(_id)
+            return;
+        }
+
+        // Make the API call to add the like
+        const response = await axios.post(`/api/v1/post/${_id}/dolike`, {
+            userId: state.user.userId
+        });
+
+        if (response.data === "Like added successfully") {
+            setIsLike(true);
+            // Update the like button
+        } else {
+            // console.log("Failed to add like.");
+        }
+
+        let thumb = event.target.firstElementChild
+        thumb.classList.remove("bi-hand-thumbs-up")
+        thumb.classList.add("bi-hand-thumbs-up-fill")
+        setIsLike(true);
+
+    } catch (error) {
+        // Handle error
+        console.log("Error adding like:", error);
+    }
+};
+
+const undoLike = async (_id, event) => {
+    try {
+        // Make the API call to remove the like
+        const response = await axios.delete(`/api/v1/post/${_id}/undolike`, {
+            data: { userId: state.user.userId }
+        });
+
+        if (response.data === "Like removed successfully") {
+            setIsLike(false); // Update the like button
+        } else {
+            // Handle the case where the undo like API fails
+            // console.log("Failed to remove like.");
+        }
+
+        let thumb = event.target.firstElementChild
+        thumb.classList.add("bi-hand-thumbs-up")
+        thumb.classList.remove("bi-hand-thumbs-up-fill")
+        setIsLike(false);
+
+    } catch (error) {
+        // Handle error
+        console.log("Error removing like:", error);
+    }
+};
 
   return (
     <div className="singlePost">
@@ -35,9 +122,11 @@ const UserPost = (props) => {
         </p>
       </div>
       <div className="buttonContainer">
-        <button>
-          <i className="bi bi-hand-thumbs-up"></i>Like
-        </button>
+        <button onClick={(event)=>{
+                    doLike(props.postId, event)
+                }}>
+                    <i className={`bi ${!isLike ? "bi-hand-thumbs-up" : "bi-hand-thumbs-up-fill"}`}></i> <span id="likesCount">{props.likedBy ? props.likedBy.length  : 0}</span> {props.likedBy ? (props.likedBy.length == 1 ? "Like" : "Likes") : "Likes"}
+                </button>
         <button>
           <i className="bi bi-chat-square"></i>Comment
         </button>

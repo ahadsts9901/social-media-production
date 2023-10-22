@@ -110,7 +110,7 @@ const App = () => {
 
             {state.isLogin === false ? (
                 <>
-                    {<UnAuthNavbar />}
+                    {window.location.pathname.startsWith("/profile")? <UnAuthNavbar /> : null}
                     <Routes>
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<Signup />} />

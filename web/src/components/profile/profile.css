@@ -659,3 +659,17 @@ div:where(.swal2-container) div:where(.swal2-loader) {
         transform: rotate(360deg);
     }
 }
+
+.posts{
+    height: 100%;
+}
+
+.noUser{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3em;
+}
