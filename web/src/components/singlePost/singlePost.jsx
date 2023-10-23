@@ -1,47 +1,43 @@
-import React, { useEffect, useState, useRef, useContext } from 'react';
-import axios from 'axios';
-// import Swal from 'sweetalert2';
-import './home.css';
-import { Post, NoPost } from '../post/post';
-import { useNavigate } from 'react-router-dom';
-import { GlobalContext } from '../../context/context';
+import "./singlePost.css";
+import moment from "moment";
+import { useState, useContext, useEffect } from "react";
+import { Search as SearchBS } from "react-bootstrap-icons";
+import axios from "axios";
+import { GlobalContext } from "../../context/context";
+import { useParams, useNavigate } from "react-router-dom";
+import { Post } from "../post/post";
 import Swal from "sweetalert2"
 
-const Home = () => {
-
+const SinglePost = () => {
   let { state, dispatch } = useContext(GlobalContext);
-
-  const [posts, setPosts] = useState([]);
-  const searchInputRef = useRef(null)
+  const [post, setPost] = useState();
   const navigate = useNavigate()
-  const me = ""
+
+  const postId = useParams();
 
   useEffect(() => {
-    renderPost();
+    seePost(postId.postId);
 
     return () => {
       // cleanup function
     };
 
-  }, [me]);
+  }, [postId]);
 
-  const renderPost = () => {
-    axios
-      .get(`/api/v1/feed`)
-      .then(function (response) {
-        let fetchedPosts = response.data;
-        // console.log("fetched posts", fetchedPosts);
-        setPosts(fetchedPosts);
-      })
-      .catch(function (error) {
-        // console.log(error);
-        let resStatus = error.response.request.status
-        // console.log(resStatus)
-        if (resStatus === 401) {
-          // console.log("not authorized")
-          navigate('/login');
-        }
-      });
+  const seePost = async (postId) => {
+    try {
+      const response = await axios.get(`/api/v1/post/${postId}`);
+      const singlePostData = response.data;
+      setPost(singlePostData);
+    } catch (error) {
+      console.error("Error fetching single post:", error);
+    }
+  };
+
+  const seeLikedUsers = async (postId) => {
+
+    navigate(`/likes/post/${postId}`)
+
   };
 
   const deletePost = (postId) => {
@@ -68,7 +64,7 @@ const Home = () => {
             showCancelButton: false,
             showConfirmButton: false
           });
-          renderPost();
+          navigate("/")
         } catch (error) {
           console.log(error.data);
           Swal.fire({
@@ -120,7 +116,7 @@ const Home = () => {
                   timer: 1000,
                   showConfirmButton: false
                 });
-                renderPost();
+                seePost(postId)
               })
               .catch(error => {
                 // console.log(error.response.data);
@@ -146,18 +142,40 @@ const Home = () => {
   }
 
   return (
-    <div className="result">
-      {!posts ? <span className="loader"></span> : (posts.length === 0 ? (
-        <div className="loadContainer">
-          <span className="loader"></span>
-        </div>
+    <div className="singlePostCont">
+      <div className="backArrow">
+      <h2 className="bi bi-arrow-left" onClick={()=>{ window.history.back() }}></h2>
+      </div>
+      {post ? ( // Check if post is defined
+        <>
+          <Post
+            key={post._id}
+            title={post.title}
+            text={post.text}
+            time={post.time}
+            postId={post._id}
+            userId={post.userId}
+            likedBy={post.likes}
+            edit={editPost}
+            del={deletePost}
+          />
+          <p
+            onClick={() => {
+              seeLikedUsers(post._id);
+            }}
+            className="seeWhoLiked"
+          >
+            See Who Liked...
+          </p>
+        </>
       ) : (
-        posts.map((post, index) => (
-          <Post key={index} title={post.title} text={post.text} time={post.time} postId={post._id} userId={post.userId} likedBy={post.likes} del={deletePost} edit={editPost} />
-        ))
-      ))}
+        <span class="loader"></span>
+      )}
+      <div className="commentSection">
+        Comments section is under construction
+      </div>
     </div>
   );
 };
 
-export default Home
+export default SinglePost;

@@ -10,65 +10,6 @@ const userCollection = db.collection("auth");
 
 let router = express.Router()
 
-const initializeOpenAIClient = () => {
-    return new openai({
-        apiKey: process.env.OPENAI_API_KEY, // Replace with your OpenAI API key
-    });
-};
-
-router.get("/search", async (req, res) => {
-    const queryText = req.query.q;
-
-    try {
-        // Initialize the OpenAI client
-        const openaiClient = initializeOpenAIClient();
-
-        // Create an embedding for the query text
-        const response = await openaiClient.embeddings.create({
-            model: "text-embedding-ada-002",
-            input: queryText,
-        });
-
-        // Extract the vector from the response
-        const vector = response?.data[0]?.embedding;
-
-        // Perform a search using the vector
-        const documents = await col
-            .aggregate([
-                {
-                    $search: {
-                        index: "we_app",
-                        knnBeta: {
-                            vector: vector,
-                            path: "embedding",
-                            k: 10,
-                        },
-                        scoreDetails: true,
-                    },
-                },
-            ])
-            .toArray();
-
-        res.send(documents);
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error during search');
-    }
-});
-
-router.get('/feed', async (req, res, next) => {
-    try {
-        const cursor = col.find({}).sort({ _id: -1 });
-        let results = await cursor.toArray();
-
-        console.log(results);
-        res.send(results);
-    } catch (error) {
-        console.error(error);
-    }
-});
-
-
 router.get('/profile/:userId', async (req, res, next) => {
 
     const userId = req.params.userId || req.body.decoded.userId
@@ -108,7 +49,8 @@ router.get('/posts/:userId', async (req, res, next) => {
     }
 
     try {
-        const cursor = col.find({ userId: new ObjectId(userId) }).sort({ _id: -1 });
+        const projection = {_id :1, title:1, text:1, time:1, userId:1, likes:1, }
+        const cursor = col.find({ userId: new ObjectId(userId) }).sort({ _id: -1 }.project(projection));
         const results = await cursor.toArray();
 
         console.log(results);
@@ -116,6 +58,49 @@ router.get('/posts/:userId', async (req, res, next) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Server error');
+    }
+});
+
+router.get('/post/:postId', async (req, res, next) => {
+
+    console.log(req.params.postId);
+    const postId = new ObjectId(req.params.postId);
+
+    try {
+        const projection = {_id :1, title:1, text:1, time:1, userId:1, likes:1, }
+        const post = await col.findOne({ _id: postId }.project(projection));
+
+        if (post) {
+            res.send(post);
+        } else {
+            res.status(404).send('Post not found with id ' + postId);
+        }
+    } catch (error) {
+        console.error(error);
+        console.log(postId)
+    }
+});
+
+router.get('/likes/:postId', async (req, res, next) => {
+    const postId = req.params.postId;
+
+    if (!ObjectId.isValid(postId)) {
+        res.status(403).send(`Invalid post id`);
+        return;
+    }
+
+    try {
+        let result = await col.findOne({ _id: new ObjectId(postId) });
+
+        if (result) {
+            console.log("result: ", result);
+            res.status(200).send(result.likes);
+        } else {
+            res.status(404).send('Post not found');
+        }
+    } catch (e) {
+        console.log("error getting data from MongoDB: ", e);
+        res.status(500).send('Server error, please try later');
     }
 });
 

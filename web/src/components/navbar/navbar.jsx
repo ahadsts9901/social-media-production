@@ -1,5 +1,5 @@
 import { ChatDots, House, HouseFill, Person, PersonFill, Controller, Search as SearchBS, Bell, BellFill, PlusCircle, PlusCircleFill, PersonLock, PersonFillLock } from 'react-bootstrap-icons';
-import { useEffect, useContext } from 'react';
+import { useContext } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { GlobalContext } from '../../context/context';
 import './navbar.css';

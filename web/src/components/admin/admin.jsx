@@ -14,6 +14,11 @@ const Admin = () => {
 
   useEffect(() => {
     renderAdminPost();
+
+    return () => {
+      // cleanup function
+    };
+
   }, []);
 
   const renderAdminPost = () => {
@@ -135,13 +140,13 @@ const Admin = () => {
     <div className='posts adminPosts'>
       <h2 className="adminHeading">Admin Dashboard</h2>
       <div className="result">
-        {!adminPosts ? <h2 className='noPostMesage'>No Post Found</h2> : (adminPosts.length === 0 ? (
+        {!adminPosts ? <span className="loader"></span> : (adminPosts.length === 0 ? (
           <div className="loadContainer">
-            <h2 className='noPostMesage'>No Post Found</h2>
+            <span className="loader"></span>
           </div>
         ) : (
           adminPosts.map((post, index) => (
-            <UserPost key={index} title={post.title} text={post.text} time={post.time} postId={post._id} del={deletePost} edit={editPost} likedBy={post.likes} />
+            <UserPost key={index} title={post.title} text={post.text} time={post.time} postId={post._id} userId={post.userId} del={deletePost} edit={editPost} likedBy={post.likes} />
           ))
         ))}
       </div>

@@ -21,8 +21,12 @@ const Profile = () => {
   useEffect(() => {
     renderCurrentUserPost();
     getProfile()
-  }, [
-    userParamsId]);
+
+    return () => {
+      // cleanup function
+    };
+
+  }, [userParamsId]);
 
   const renderCurrentUserPost = () => {
     axios.get(`/api/v1/posts/${userParamsId || ""}`)
@@ -226,9 +230,9 @@ const Profile = () => {
               userPosts.map((post, index) => (
 
                 (state.user.userId === profile.userId || state.isAdmin == true) ?
-                  (<UserPost key={index} title={post.title} text={post.text} time={post.time} postId={post._id} del={deletePost} edit={editPost} likedBy={post.likes} />)
+                  (<UserPost key={index} title={post.title} text={post.text} time={post.time} postId={post._id} userId={post.userId} del={deletePost} edit={editPost} likedBy={post.likes} />)
                   :
-                  (<Post key={index} title={post.title} text={post.text} time={post.time} postId={post._id} likedBy={post.likes} />)
+                  (<Post key={index} title={post.title} text={post.text} time={post.time} postId={post._id} userId={post.userId} likedBy={post.likes} />)
 
               ))
             ))}
