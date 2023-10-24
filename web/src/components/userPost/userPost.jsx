@@ -122,7 +122,7 @@ const UserPost = (props) => {
       </div>
       <div className="textContainer" >
         <p className={`${fullText.length <= 40 ? "bigText" : "smallText"}`}>
-          {showFullPost ? fullText : splittedText}
+          <span onClick={()=>{ seePost(props.postId) }} >{showFullPost ? fullText : splittedText}</span>
           {splittedText !== fullText && (
             <span className="see" onClick={toggleShowFullPost}>
               {showFullPost ? "...see less" : "...see more"}

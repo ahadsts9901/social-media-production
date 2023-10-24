@@ -49,8 +49,7 @@ router.get('/posts/:userId', async (req, res, next) => {
     }
 
     try {
-        const projection = {_id :1, title:1, text:1, time:1, userId:1, likes:1, }
-        const cursor = col.find({ userId: new ObjectId(userId) }).sort({ _id: -1 }.project(projection));
+        const cursor = col.find({ userId: new ObjectId(userId) }).sort({ _id: -1 });
         const results = await cursor.toArray();
 
         console.log(results);
@@ -67,8 +66,7 @@ router.get('/post/:postId', async (req, res, next) => {
     const postId = new ObjectId(req.params.postId);
 
     try {
-        const projection = {_id :1, title:1, text:1, time:1, userId:1, likes:1, }
-        const post = await col.findOne({ _id: postId }.project(projection));
+        const post = await col.findOne({ _id: postId });
 
         if (post) {
             res.send(post);
