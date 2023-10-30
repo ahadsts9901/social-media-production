@@ -2,45 +2,141 @@ import express from 'express';
 import { client } from '../mongodb.mjs'
 import { ObjectId } from 'mongodb';
 import openai from "openai"
+import admin from "firebase-admin";
+import multer, { diskStorage } from 'multer';
+import fs from "fs";
 
 const db = client.db("weapp")
 const col = db.collection("posts")
 const userCollection = db.collection("auth")
 
+//==============================================
+const storageConfig = diskStorage({ // https://www.npmjs.com/package/multer#diskstorage
+    destination: './uploads/',
+    filename: function (req, file, cb) {
+        console.log("mul-file: ", file);
+        cb(null, `postImg-${new Date().getTime()}-${file.originalname}`)
+    }
+})
+let upload = multer({ storage: storageConfig })
+//==============================================
+
+
+// storage bucket
+
+// https://firebase.google.com/docs/storage/admin/start
+let serviceAccount = {
+    "type": "service_account",
+    "project_id": "simple-database-b15ab",
+    "private_key_id": "dc544906682d1d9d2215617d57b89b13c2a68202",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCkimr29ivEeVnB\n4yZtrAH4Tgnzd5nuRsuYzB61bJhSJfaYq1/6V+yVCLuWt0ouD0g6oX2dkS8fmuYG\nLFGk425ZLhmjZAsk3JLP9l7D+SFJW5eQFyAzGhKz6jV1hQbahuEZRMeRlyFMtSsi\n+crJjQ+zgpmIwov7yD4lEJqi27x/IylAO2LlFVM5nVQASWivDh1gxciJ+Vlr4xLd\nphH9WRn53CN6R8m33QThktHWWqKlmpstxHFM355pz2W1H8iFqAsPz+Qkz5GsIaHH\nmpqJyKeVzjU7ddqfIk8PqOH+2SB/JbBWsh6vR8SZhKge5pOGQ4bFiIKZlSsEDIUO\nyN73INLdAgMBAAECggEAG809lJv0uj5s4Zthd198d7mr6cT4L/ArX5aBy9LdC+hZ\nOeOfFHw9v9LZa3Zt5Ml1QV7fDDwnU7ZHDpz3cJ5zG0N0VozFa0WP0u7EhWV3b983\nhUO7D5dkuJymysQe69alezEJbXq1SDJGZyMA1jxs/j5fdeG1aGYlxfp/vmvVdj+z\ne+F0M9DebULZ1P3OngseDoAfz9d125rLMqaBdO3hbcD2aMyf/4VRMg9o8qoEF50f\naEI3HjyrKk1v2VlthXMlzFhgkGBLzzGPDdpivVvxGw9OU9Lh4QKFVKFLvLdOyMtR\neAtIbsPenrHSj90lY7d8vQtLXBCdCK6q7o3lgJKtoQKBgQDibqqZlApbSMyVArSZ\nKM8+sEeyrkSx3j09ZmjqtTn19WNiade3ixF3mBm0AvqtvTT0kf5w/F4VvxRbdYGJ\nxX767gBYqHa+qV2qV6KbOpohVm1jouLtwrjxzzJbaRGw0Knv7PTdNj7mm/b6y4tp\nT8HWBXh/MFMaCeMKF215LE2LzQKBgQC6Bsv6kFPR8V0kHQrB6URnhg4GI3tILW0V\nRgD8V1Bost3ki3AKfxDSHOYPpBNiEbdK3c7S3XaCOqma+UZCkWZa903C1icvYUmb\ngnnuam8YMW2p3UDftY1XB43ylOwxu93TIWV84rZ2/E5uXst6pP3ZGjkVyx5G575h\n460A9nTzUQKBgQDOeBjJp4r2B+C8c1YYXnTzdaw7CtsK0VpIFYzPj+bFFzfDcj3I\nWF/aDHBLi3fnWqLh7An2Hrjv3WeDqhcveE28I69fKGX2ntsQy44zO3F1uqhOdSW1\npZwcqlEBt0HxV6PNaeUxnRgoEclYkKeTpK1cKWrhlz//e0pyVkB1gGdJdQKBgAv/\nkjp4AqAA5FQG94GoTPwsXk0xDquKGoYLvNaJvyrxlnQ+NhzHM0uKB6CsoX9qyxqu\nEb/x/snJhNT1DP4QKLznRIGzlFVu/fNkx/6DqOSzk3IoTh3ftN0PJK2nw1A14MnU\nVppmeQRVo61kudUQPTs6gMISFsLWAaaIq8jrHIHxAoGAbZfcsVGr18vmhyIspBMa\n4ejxxhubG7/VZ5ScJ52qMBRD2ck2JNfStVTVpiFfS5SlE/L+7eSv22BGN/qAdiep\nWoQUKtx5CwDaD9/axOlheVnjzmudwyc3vjpwIh+/FbqaPyVkVL8dJ1BmmnHPW/fG\npkPrAXjA5zYlTi2iAtZyUns=\n-----END PRIVATE KEY-----\n",
+    "client_email": "firebase-adminsdk-vbe7e@simple-database-b15ab.iam.gserviceaccount.com",
+    "client_id": "114919398174781168093",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-vbe7e%40simple-database-b15ab.iam.gserviceaccount.com",
+    "universe_domain": "googleapis.com"
+}
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    // databaseURL: "https://smit-b9.firebaseio.com"
+});
+const bucket = admin.storage().bucket("gs://smit-b9.appspot.com");
+
+//==============================================
+
 let router = express.Router()
 
 // POST    /api/v1/post
-router.post('/post', async (req, res, next) => {
+router.post('/post', (req, res, next) => {
+    req.decoded = { ...req.body.decoded }
+    next();
+},
+    upload.any(), async (req, res, next) => {
 
-    if (!req.body.title ||
-        !req.body.text
-    ) {
-        res.status(403);
-        res.send(`required parameters missing, 
+        if (!req.body.postTitle ||
+            !req.body.postText
+        ) {
+            res.status(403);
+            res.send(`required parameters missing, 
         example request body:
         {
-            title: "abc post title",
-            text: "some post text"
+            postTitle: "abc post title",
+            postText: "some post text"
         } `);
-        return;
-    }
+            return;
+        }
 
-    const insertResponse = await col.insertOne({
-        title: req.body.title,
-        text: req.body.text,
-        time: new Date(),
-        email: req.body.email,
-        userId: new ObjectId(req.body.userId),
+        console.log("req.files: ", req.files);
+
+        if (req.files[0].size > 2000000) { // size bytes, limit of 2MB
+            res.status(403).send({ message: 'File size limit exceed, max limit 2MB' });
+            return;
+        }
+
+        bucket.upload(
+            req.files[0].path,
+            {
+                destination: `posts/${req.files[0].filename}`, // give destination name if you want to give a certain name to file in bucket, include date to make name unique otherwise it will replace previous file with the same name
+            },
+            function (err, file, apiResponse) {
+                if (!err) {
+                    // console.log("api resp: ", apiResponse);
+
+                    // https://googleapis.dev/nodejs/storage/latest/Bucket.html#getSignedUrl
+                    file.getSignedUrl({
+                        action: 'read',
+                        expires: '03-09-2491'
+                    }).then(async (urlData, err) => {
+                        if (!err) {
+                            console.log("public downloadable url: ", urlData[0]) // this is public downloadable url 
+
+
+                            try {
+                                const insertResponse = await col.insertOne({
+                                    title: req.body.postTitle,
+                                    text: req.body.postText,
+                                    time: new Date(),
+                                    email: req.body.userLogEmail,
+                                    userId: new ObjectId(req.body.userId),
+                                    image: req.body.image
+                                })
+                                console.log(insertResponse)
+
+                                res.send('post created');
+                            } catch (e) {
+                                console.log("error inserting mongodb: ", e);
+                                res.status(500).send({ message: 'server error, please try later' });
+                            }
+
+
+
+                            // // delete file from folder before sending response back to client (optional but recommended)
+                            // // optional because it is gonna delete automatically sooner or later
+                            // // recommended because you may run out of space if you dont do so, and if your files are sensitive it is simply not safe in server folder
+
+                            try {
+                                fs.unlinkSync(req.files[0].path)
+                                //file removed
+                            } catch (err) {
+                                console.error(err)
+                            }
+                        }
+                    })
+                } else {
+                    console.log("err: ", err)
+                    res.status(500).send({
+                        message: "server error"
+                    });
+                }
+            });
     })
-    console.log(insertResponse)
-
-    res.send('post created');
-})
 
 //GET  ALL   POSTS   /api/v1/post/:postId
 router.get('/feed', async (req, res, next) => {
     try {
-        const projection = {_id :1, title:1, text:1, time:1, userId:1, likes:1, }
+        const projection = { _id: 1, title: 1, text: 1, time: 1, userId: 1, likes: 1, }
         const cursor = col.find({}).sort({ _id: -1 }).project(projection);
         let results = await cursor.toArray();
 
@@ -143,7 +239,7 @@ router.get('/posts/:userId', async (req, res, next) => {
     }
 
     try {
-        const projection = {_id :1, title:1, text:1, time:1, userId:1, likes:1, }
+        const projection = { _id: 1, title: 1, text: 1, time: 1, userId: 1, likes: 1, }
         const cursor = col.find({ userId: new ObjectId(userId) }).sort({ _id: -1 }).project(projection);
         const results = await cursor.toArray();
 
@@ -279,9 +375,9 @@ router.post('/post/:postId/dolike', async (req, res, next) => {
             {
                 $addToSet: {
                     likes: {
-                        userId : new ObjectId(req.body.userId),
-                        firstName : req.body.decoded.firstName,
-                        lastName : req.body.decoded.lastName,
+                        userId: new ObjectId(req.body.userId),
+                        firstName: req.body.decoded.firstName,
+                        lastName: req.body.decoded.lastName,
                     }
                 }
             }

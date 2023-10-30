@@ -605,3 +605,19 @@ div:where(.swal2-container) div:where(.swal2-loader) {
     flex-direction: column;
     gap: 0.5em;
 }
+
+#file{
+    font-size: 2em;
+    color: #284352;
+}
+
+.selectedFile{
+    width: 425px;
+    object-fit: cover;
+}
+
+@media (max-width : 480px){
+    .selectedFile{
+        width: 100%;
+    }
+}
