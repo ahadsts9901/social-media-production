@@ -30,6 +30,7 @@ router.get('/profile/:userId', async (req, res, next) => {
                 lastName: result.lastName,
                 email: result.email,
                 userId: result._id,
+                profileImage: result.profileImage
             },
             id: userId
         });

@@ -42,7 +42,7 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     // databaseURL: "https://smit-b9.firebaseio.com"
 });
-const bucket = admin.storage().bucket("gs://smit-b9.appspot.com");
+const bucket = admin.storage().bucket("simple-database-b15ab.appspot.com");
 
 //==============================================
 
@@ -50,93 +50,103 @@ let router = express.Router()
 
 // POST    /api/v1/post
 router.post('/post', (req, res, next) => {
-    req.decoded = { ...req.body.decoded }
+    req.decoded = { ...req.body.decoded };
     next();
 },
     upload.any(), async (req, res, next) => {
-
-        if (!req.body.postTitle ||
-            !req.body.postText
-        ) {
+        if (!req.body.postText) {
             res.status(403);
             res.send(`required parameters missing, 
         example request body:
         {
-            postTitle: "abc post title",
             postText: "some post text"
-        } `);
+        }`);
             return;
         }
 
-        console.log("req.files: ", req.files);
-
-        if (req.files[0].size > 2000000) { // size bytes, limit of 2MB
-            res.status(403).send({ message: 'File size limit exceed, max limit 2MB' });
+        if (req.files && req.files[0] && req.files[0].size > 2000000) { // Check file size if a file is provided
+            res.status(403).send({ message: 'File size limit exceeded, max limit 2MB' });
             return;
         }
 
-        bucket.upload(
-            req.files[0].path,
-            {
-                destination: `posts/${req.files[0].filename}`, // give destination name if you want to give a certain name to file in bucket, include date to make name unique otherwise it will replace previous file with the same name
-            },
-            function (err, file, apiResponse) {
-                if (!err) {
-                    // console.log("api resp: ", apiResponse);
+        // Handle file upload only if a file is provided
+        if (req.files && req.files[0]) {
+            bucket.upload(
+                req.files[0].path,
+                {
+                    destination: `posts/${req.files[0].filename}`,
+                },
+                function (err, file, apiResponse) {
+                    if (!err) {
+                        // Handle file upload and processing
 
-                    // https://googleapis.dev/nodejs/storage/latest/Bucket.html#getSignedUrl
-                    file.getSignedUrl({
-                        action: 'read',
-                        expires: '03-09-2491'
-                    }).then(async (urlData, err) => {
-                        if (!err) {
-                            console.log("public downloadable url: ", urlData[0]) // this is public downloadable url 
+                        file.getSignedUrl({
+                            action: 'read',
+                            expires: '03-09-2491'
+                        }).then(async (urlData, err) => {
+                            if (!err) {
+                                console.log("public downloadable url: ", urlData[0]) // this is a public downloadable URL
 
+                                // Continue handling text data
+                                try {
+                                    const insertResponse = await col.insertOne({
+                                        title: req.body.postTitle || '', // Set to an empty string if not provided
+                                        text: req.body.postText,
+                                        time: new Date(),
+                                        email: req.body.userLogEmail,
+                                        userId: new ObjectId(req.body.userId),
+                                        image: urlData[0], // Set to an empty string if no file was provided
+                                        userImage: req.body.userImage,
+                                    });
+                                    console.log(insertResponse);
+                                    res.send('post created');
+                                } catch (e) {
+                                    console.log("error inserting mongodb: ", e);
+                                    res.status(500).send({ message: 'server error, please try later' });
+                                }
 
-                            try {
-                                const insertResponse = await col.insertOne({
-                                    title: req.body.postTitle,
-                                    text: req.body.postText,
-                                    time: new Date(),
-                                    email: req.body.userLogEmail,
-                                    userId: new ObjectId(req.body.userId),
-                                    image: req.body.image
-                                })
-                                console.log(insertResponse)
-
-                                res.send('post created');
-                            } catch (e) {
-                                console.log("error inserting mongodb: ", e);
-                                res.status(500).send({ message: 'server error, please try later' });
+                                // Delete the uploaded file from the server folder (if a file was provided)
+                                if (req.files && req.files[0]) {
+                                    try {
+                                        fs.unlinkSync(req.files[0].path)
+                                        //file removed
+                                    } catch (err) {
+                                        console.error(err)
+                                    }
+                                }
                             }
-
-
-
-                            // // delete file from folder before sending response back to client (optional but recommended)
-                            // // optional because it is gonna delete automatically sooner or later
-                            // // recommended because you may run out of space if you dont do so, and if your files are sensitive it is simply not safe in server folder
-
-                            try {
-                                fs.unlinkSync(req.files[0].path)
-                                //file removed
-                            } catch (err) {
-                                console.error(err)
-                            }
-                        }
-                    })
-                } else {
-                    console.log("err: ", err)
-                    res.status(500).send({
-                        message: "server error"
-                    });
-                }
-            });
-    })
+                        });
+                    } else {
+                        console.log("err: ", err)
+                        res.status(500).send({
+                            message: "server error"
+                        });
+                    }
+                });
+        } else {
+            // Continue handling text data
+            try {
+                const insertResponse = await col.insertOne({
+                    title: req.body.postTitle || '', // Set to an empty string if not provided
+                    text: req.body.postText,
+                    time: new Date(),
+                    email: req.body.userLogEmail,
+                    userId: new ObjectId(req.body.userId),
+                    userImage: req.body.userImage,
+                });
+                console.log(insertResponse);
+                res.send('post created');
+            } catch (e) {
+                console.log("error inserting mongodb: ", e);
+                res.status(500).send({ message: 'server error, please try later' });
+            }
+        }
+    });
 
 //GET  ALL   POSTS   /api/v1/post/:postId
 router.get('/feed', async (req, res, next) => {
     try {
-        const projection = { _id: 1, title: 1, text: 1, time: 1, userId: 1, likes: 1, }
+        const projection = { _id: 1, title: 1, text: 1, time: 1, userId: 1, likes: 1, image: 1, userImage: 1 }
         const cursor = col.find({}).sort({ _id: -1 }).project(projection);
         let results = await cursor.toArray();
 
@@ -239,7 +249,7 @@ router.get('/posts/:userId', async (req, res, next) => {
     }
 
     try {
-        const projection = { _id: 1, title: 1, text: 1, time: 1, userId: 1, likes: 1, }
+        const projection = { _id: 1, title: 1, text: 1, time: 1, userId: 1, likes: 1, userImage: 1 }
         const cursor = col.find({ userId: new ObjectId(userId) }).sort({ _id: -1 }).project(projection);
         const results = await cursor.toArray();
 
@@ -273,6 +283,7 @@ router.get('/profile/:userId', async (req, res, next) => {
                 lastName: result.lastName,
                 email: result.email,
                 userId: result._id,
+                profileImage: result.profileImage
             },
             id: userId
         });
@@ -298,6 +309,7 @@ router.use('/ping', async (req, res, next) => {
                 lastName: result.lastName,
                 email: result.email,
                 userId: result._id,
+                profileImage: result.profileImage,
             }
         });
 
@@ -378,6 +390,7 @@ router.post('/post/:postId/dolike', async (req, res, next) => {
                         userId: new ObjectId(req.body.userId),
                         firstName: req.body.decoded.firstName,
                         lastName: req.body.decoded.lastName,
+                        profileImage: req.body.profileImage,
                     }
                 }
             }
@@ -445,6 +458,69 @@ router.get('/likes/:postId', async (req, res, next) => {
         res.status(500).send('Server error, please try later');
     }
 });
+
+// profile picture upload
+
+router.post('/profilePicture', (req, res, next) => {
+    req.decoded = { ...req.body.decoded }
+    next();
+},
+    upload.any(), async (req, res, next) => {
+
+        if (req.files[0].size > 2000000) { // size bytes, limit of 2MB
+            res.status(403).send({ message: 'File size limit exceed, max limit 2MB' });
+            return;
+        }
+
+        bucket.upload(
+            req.files[0].path,
+            {
+                destination: `profiles/${req.files[0].filename}`, // give destination name if you want to give a certain name to file in bucket, include date to make name unique otherwise it will replace previous file with the same name
+            },
+            function (err, file, apiResponse) {
+                if (!err) {
+                    // console.log("api resp: ", apiResponse);
+
+                    // https://googleapis.dev/nodejs/storage/latest/Bucket.html#getSignedUrl
+                    file.getSignedUrl({
+                        action: 'read',
+                        expires: '03-09-2491'
+                    }).then(async (urlData, err) => {
+                        if (!err) {
+                            console.log("public downloadable url: ", urlData[0]) // this is public downloadable url 
+                            try {
+                                const updateResponse = await userCollection.updateOne(
+                                    { _id: new ObjectId(req.body.userId) },
+                                    { $set: { profileImage: urlData[0] } }
+                                );
+                                console.log(updateResponse)
+
+                                res.send('profile uploaded');
+                            } catch (e) {
+                                console.log("error inserting mongodb: ", e);
+                                res.status(500).send({ message: 'server error, please try later' });
+                            }
+
+                            // // delete file from folder before sending response back to client (optional but recommended)
+                            // // optional because it is gonna delete automatically sooner or later
+                            // // recommended because you may run out of space if you dont do so, and if your files are sensitive it is simply not safe in server folder
+
+                            try {
+                                fs.unlinkSync(req.files[0].path)
+                                //file removed
+                            } catch (err) {
+                                console.error(err)
+                            }
+                        }
+                    })
+                } else {
+                    console.log("err: ", err)
+                    res.status(500).send({
+                        message: "server error"
+                    });
+                }
+            });
+})
 
 
 export default router

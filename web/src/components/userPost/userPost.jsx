@@ -57,6 +57,7 @@ const UserPost = (props) => {
       // Make the API call to add the like
       const response = await axios.post(`/api/v1/post/${_id}/dolike`, {
         userId: state.user.userId,
+        profileImage : state.user.profileImage
       });
 
       if (response.data === "Like added successfully") {
@@ -104,15 +105,15 @@ const UserPost = (props) => {
     navigate(`/post/${postId}`);
   };
 
-  const getProfile = async (userId) =>{
+  const getProfile = async (userId) => {
     navigate(`/profile/${userId}`)
   }
 
   return (
     <div className="singlePost">
-      <div className="postHead" onClick={() =>{ getProfile(props.userId) }}>
+      <div className="postHead" onClick={() => { getProfile(props.userId) }}>
         <img
-          src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+          src={props.userImage || `https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`}
           alt="Profile"
         />
         <div className="postNames">
@@ -121,14 +122,15 @@ const UserPost = (props) => {
         </div>
       </div>
       <div className="textContainer" >
-        <p className={`${fullText.length <= 40 ? "bigText" : "smallText"}`}>
-          <span onClick={()=>{ seePost(props.postId) }} >{showFullPost ? fullText : splittedText}</span>
+        <p className={`${fullText.length <= 40 ? (props.image ? "smallText" : "bigText") : "smallText"}`}>
+          <span onClick={() => { seePost(props.postId) }} >{showFullPost ? fullText : splittedText}</span>
           {splittedText !== fullText && (
             <span className="see" onClick={toggleShowFullPost}>
               {showFullPost ? "...see less" : "...see more"}
             </span>
           )}
         </p>
+        {props.image && <img src={props.image} alt="post image" className="postImg" />}
       </div>
       <div className="buttonContainer">
         <button
@@ -137,9 +139,8 @@ const UserPost = (props) => {
           }}
         >
           <i
-            className={`bi ${
-              !isLike ? "bi-hand-thumbs-up" : "bi-hand-thumbs-up-fill"
-            }`}
+            className={`bi ${!isLike ? "bi-hand-thumbs-up" : "bi-hand-thumbs-up-fill"
+              }`}
           ></i>{" "}
           <span id="likesCount">
             {props.likedBy ? props.likedBy.length : 0}

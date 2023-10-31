@@ -47,7 +47,7 @@ const PostLikes = (props) => {
       <div className="likesList">
       {!likeUsers ? <span className="loader"></span> : 
       likeUsers.map((user, index) => (
-          <LikeUsers getUser={getProfile} firstName={user.firstName} lastName={user.lastName} userId={user.userId} />
+          <LikeUsers getUser={getProfile} profileImage={user.profileImage} firstName={user.firstName} lastName={user.lastName} userId={user.userId} />
         ))}
       </div>
     </div>

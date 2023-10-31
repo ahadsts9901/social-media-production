@@ -41,7 +41,7 @@ const Search = () => {
           <h2 className='noPostMessage'> <SearchBS/> Search Post . . . </h2>
         ) : (
           posts.map((post, index) => (
-            <Post key={index} title={post.title} text={post.text} time={post.time} postId={post._id} />
+            <Post image={post.image} key={index} title={post.title} text={post.text} time={post.time} postId={post._id} />
           ))
         )}
       </div>

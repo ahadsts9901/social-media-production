@@ -58,3 +58,14 @@ a {
     width: 100%;
     height: 100%;
 }
+
+.postImg{
+    width: 425px;
+    object-fit: cover;
+}
+
+@media (max-width : 480px){
+    .postImg{
+        width: 100%;
+    }
+}

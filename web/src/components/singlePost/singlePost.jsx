@@ -158,6 +158,8 @@ const SinglePost = () => {
             likedBy={post.likes}
             edit={editPost}
             del={deletePost}
+            image={post.image}
+            userImage={post.userImage}
           />
           <p
             onClick={() => {

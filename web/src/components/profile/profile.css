@@ -673,3 +673,9 @@ div:where(.swal2-container) div:where(.swal2-loader) {
     align-items: center;
     font-size: 3em;
 }
+
+.profileImageSelect{
+    width: 10em!important;
+    height: 10em!important;
+    object-fit: cover;
+}

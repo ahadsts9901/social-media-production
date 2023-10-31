@@ -7,6 +7,7 @@ import { Post } from "../post/post"
 import { useParams } from 'react-router-dom';
 import { GlobalContext } from '../../context/context';
 import { PencilFill } from 'react-bootstrap-icons'
+import { useRef } from 'react';
 
 const Profile = () => {
 
@@ -14,6 +15,9 @@ const Profile = () => {
 
   const [userPosts, setUserPosts] = useState([]);
   const [profile, setProfile] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null)
+
+  const fileInputRef = useRef()
 
   // const userId = state.user.userId
   const { userParamsId } = useParams()
@@ -27,6 +31,52 @@ const Profile = () => {
     };
 
   }, [userParamsId]);
+
+  if (selectedImage) {
+
+    Swal.fire({
+      title: 'Edit Profile',
+      html: `
+        <img src="${selectedImage}" class="profileImageSelect" />
+      `,
+      showCancelButton: true,
+      showConfirmButton: true,
+      cancelButtonText: "Cancel",
+      confirmButtonText: "Upload",
+      cancelButtonColor: "#284352",
+      confirmButtonColor: "#284352",
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        let formData = new FormData();
+
+        formData.append("profileImage", fileInputRef.current.files[0]);
+        formData.append("userId", state.user.userId);
+
+        axios
+          .post(`/api/v1/profilePicture`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          })
+          .then(function (response) {
+            // console.log(response.data);
+            Swal.fire({
+              icon: "success",
+              title: "Profile Updated",
+              timer: 1000,
+              showConfirmButton: false,
+            });
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+
+        setSelectedImage("")
+
+      }
+    });
+
+
+  }
 
   const renderCurrentUserPost = () => {
     axios.get(`/api/v1/posts/${userParamsId || ""}`)
@@ -200,13 +250,12 @@ const Profile = () => {
 
         <>
           <div className="profile">
-            <img className='profileIMG' src={`https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`} />
+            <img className='profileIMG' src={profile.profileImage || `https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`} />
 
             <h2 className='profileName'>{profile.firstName} {profile.lastName}
 
               {(state.user.userId === profile.userId) ? <PencilFill className='pencil' /> : null}
             </h2>
-
 
             {(state.user.userId === profile.userId) ?
               <button className='logOutButton' onClick={logOut}>Log Out</button>
@@ -217,7 +266,10 @@ const Profile = () => {
                 {(state.user.userId === profile.userId) ? <PencilFill className='pencil' /> : null}
 
               </label>
-              <input type="file" className="file hidden" id="profileImage" accept="image/*"></input>
+              <input type="file" ref={fileInputRef} className="file hidden" id="profileImage" accept="image/*" onChange={(e) => {
+                const base64Url = URL.createObjectURL(e.target.files[0]);
+                setSelectedImage(base64Url);
+              }} />
             </div>
           </div>
 
@@ -230,9 +282,9 @@ const Profile = () => {
               userPosts.map((post, index) => (
 
                 (state.user.userId === profile.userId || state.isAdmin == true) ?
-                  (<UserPost key={index} title={post.title} text={post.text} time={post.time} postId={post._id} userId={post.userId} del={deletePost} edit={editPost} likedBy={post.likes} />)
+                  (<UserPost key={index} title={post.title} text={post.text} time={post.time} postId={post._id} image={post.image} userId={post.userId} userImage={post.userImage} del={deletePost} edit={editPost} likedBy={post.likes} />)
                   :
-                  (<Post key={index} title={post.title} text={post.text} time={post.time} postId={post._id} userId={post.userId} likedBy={post.likes} />)
+                  (<Post key={index} title={post.title} text={post.text} time={post.time} postId={post._id} userId={post.userId} image={post.image} likedBy={post.likes} userImage={post.userImage} />)
 
               ))
             ))}

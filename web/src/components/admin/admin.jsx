@@ -146,7 +146,7 @@ const Admin = () => {
           </div>
         ) : (
           adminPosts.map((post, index) => (
-            <UserPost key={index} title={post.title} text={post.text} time={post.time} postId={post._id} userId={post.userId} del={deletePost} edit={editPost} likedBy={post.likes} />
+            <UserPost key={index} title={post.title} text={post.text} time={post.time} postId={post._id} userId={post.userId} image={post.image} userImage={post.userImage} del={deletePost} edit={editPost} likedBy={post.likes} />
           ))
         ))}
       </div>

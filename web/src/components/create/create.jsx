@@ -27,10 +27,11 @@ const Create = () => {
     const postText = document.querySelector("#text");
 
     formData.append("postTitle", postTitle);
-    formData.append("postText", postText);
+    formData.append("postText", postText.value);
     formData.append("image", fileInputRef.current.files[0]);
     formData.append("userLogEmail", userLogEmail);
     formData.append("userId", userId);
+    formData.append("userImage", state.user.profileImage);
 
     axios
       .post(`/api/v1/post`, formData, {
@@ -46,9 +47,7 @@ const Create = () => {
         });
       })
       .catch(function (error) {
-        console.log(error);
-        document.querySelector(".result").innerHTML =
-          "Error in post submission";
+        console.log(error)
       });
 
     postText.value = "";
@@ -73,7 +72,6 @@ const Create = () => {
         }}
       />
       <textarea
-        required
         id="text"
         placeholder="Enter Text"
         className="postInput textarea"
