@@ -13,8 +13,10 @@ const Create = () => {
   const { state, dispatch } = useContext(GlobalContext);
 
   const [selectedImage, setSelectedImage] = useState("");
+  // const [selectedVideo, setSelectedVideo] = useState("");
 
   const fileInputRef = useRef("");
+  const videoInputRef = useRef("");
 
   const createPost = (event) => {
     event.preventDefault();
@@ -57,9 +59,14 @@ const Create = () => {
   return (
     <form onSubmit={createPost} className="postForm">
       <h2 className="createNewPost">Share a thought!</h2>
+      <div className="iconCont">
       <label htmlFor="file">
         <h1 className="bi bi-file-image"></h1>
       </label>
+      {/* <label htmlFor="video">
+        <h1 className="bi bi-play-btn-fill"></h1>
+      </label> */}
+      </div>
       <input
         ref={fileInputRef}
         id="file"
@@ -71,6 +78,17 @@ const Create = () => {
           setSelectedImage(base64Url);
         }}
       />
+      {/* <input
+        ref={videoInputRef}
+        id="video"
+        type="file"
+        accept="video/*"
+        hidden
+        onChange={(e) => {
+          const base64Url = URL.createObjectURL(e.target.files[0]);
+          setSelectedVideo(base64Url);
+        }}
+      /> */}
       <textarea
         id="text"
         placeholder="Enter Text"
@@ -79,6 +97,7 @@ const Create = () => {
 
       <div className="selectedFile">
         {selectedImage && <img className="selectedFile" src={selectedImage} alt="selected image" />}
+        {/* {selectedVideo && <video src={selectedVideo} autoplay controls loop className="selectedFile" alt="selected video" ></video>} */}
       </div>
 
       <button type="submit" className="postButton">

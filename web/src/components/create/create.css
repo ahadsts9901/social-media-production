@@ -616,6 +616,12 @@ div:where(.swal2-container) div:where(.swal2-loader) {
     object-fit: cover;
 }
 
+.iconCont{
+    width: 100%;
+    display: flex;
+    gap: 1em;
+}
+
 @media (max-width : 480px){
     .selectedFile{
         width: 100%;

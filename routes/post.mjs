@@ -54,13 +54,14 @@ router.post('/post', (req, res, next) => {
     next();
 },
     upload.any(), async (req, res, next) => {
-        if (!req.body.postText) {
+        
+        if (!req.body.postText && (!req.files || !req.files[0])) {
             res.status(403);
             res.send(`required parameters missing, 
-        example request body:
-        {
-            postText: "some post text"
-        }`);
+            example request body:
+            {
+                postText: "some post text"
+            }`);
             return;
         }
 
@@ -91,7 +92,7 @@ router.post('/post', (req, res, next) => {
                                 try {
                                     const insertResponse = await col.insertOne({
                                         title: req.body.postTitle || '', // Set to an empty string if not provided
-                                        text: req.body.postText,
+                                        text: req.body.postText || "",
                                         time: new Date(),
                                         email: req.body.userLogEmail,
                                         userId: new ObjectId(req.body.userId),
@@ -141,7 +142,7 @@ router.post('/post', (req, res, next) => {
                 res.status(500).send({ message: 'server error, please try later' });
             }
         }
-    });
+});
 
 //GET  ALL   POSTS   /api/v1/post/:postId
 router.get('/feed', async (req, res, next) => {
@@ -521,6 +522,5 @@ router.post('/profilePicture', (req, res, next) => {
                 }
             });
 })
-
 
 export default router
