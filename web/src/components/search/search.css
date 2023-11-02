@@ -23,6 +23,10 @@
     background-color: #00000000;
 }
 
+.searchInput::placeholder{
+    color: #b3b3b3;
+}
+
 .search>.searchButton {
     width: fit-content !important;
     height: 3em;

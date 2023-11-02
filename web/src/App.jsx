@@ -12,6 +12,7 @@ import Admin from './components/admin/admin'
 import UnAuthNavbar from './components/unAuthNavbar/unAuthNavbar';
 import SinglePost from './components/singlePost/singlePost';
 import PostLikes from './components/postLikes/postLikes';
+import ChatScreen from './components/chatScreen/chatScreen';
 
 
 import { useEffect, useContext } from 'react';
@@ -42,7 +43,7 @@ const App = () => {
 
         return () => {
             // cleanup function
-          };
+        };
 
     }, []);
 
@@ -69,12 +70,12 @@ const App = () => {
 
         return () => {
             // cleanup function
-          };
+        };
 
     }, []);
 
     const isSearchOrChatRoute =
-        location.pathname === '/search' || location.pathname === '/chat' || location.pathname === '/search/' || location.pathname === '/chat/';
+        location.pathname === '/search' || window.location.pathname.startsWith("/chat") || location.pathname === '/search/' || window.location.pathname.startsWith("/chat/") ;
 
     return (
         <div className='div'>
@@ -89,6 +90,7 @@ const App = () => {
                         <Route path="/" element={<Home />} />
                         <Route path="/profile/:userParamsId" element={<Profile />} />
                         <Route path="/chat" element={<Chat />} />
+                        <Route path="/chat/:userId" element={<ChatScreen />} />
                         <Route path="/search" element={<Search />} />
                         <Route path="/create" element={<Create />} />
                         <Route path="/notifications" element={<Notifications />} />
@@ -109,6 +111,7 @@ const App = () => {
                         <Route path="/" element={<Home />} />
                         <Route path="/profile/:userParamsId" element={<Profile />} />
                         <Route path="/chat" element={<Chat />} />
+                        <Route path="/chat/:userId" element={<ChatScreen />} />
                         <Route path="/search" element={<Search />} />
                         <Route path="/create" element={<Create />} />
                         <Route path="/notifications" element={<Notifications />} />
