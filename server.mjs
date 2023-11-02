@@ -6,6 +6,7 @@ const __dirname = path.resolve();
 
 import authRouter from './routes/auth.mjs'
 import postRouter from './routes/post.mjs'
+import chatRouter from './routes/chat.mjs'
 import cookieParser from 'cookie-parser'
 // import { decode } from 'punycode';
 
@@ -68,6 +69,7 @@ app.use("/api/v1", (req, res, next) => {
 
 
 app.use("/api/v1", postRouter)
+app.use("/api/v1", chatRouter)
 
 app.use(express.static(path.join(__dirname, 'web/build')))
 app.get(express.static(path.join(__dirname, 'web/build')))
