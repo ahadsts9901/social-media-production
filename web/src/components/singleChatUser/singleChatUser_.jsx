@@ -8,7 +8,7 @@ const SingleChatUser_ = (props) => {
 
   return (
     <div className='singleChatUser' onClick={() => { navigate(`/chat/${props.userId}`) }} >
-      <img src={props.image || `https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`} />
+      <img src={props.image} />
       <p className='chatUserName'>{props.userName}</p>
       {/* <span id="lastSeen">
         today at 09:30 AM

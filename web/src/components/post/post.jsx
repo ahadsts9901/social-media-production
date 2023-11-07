@@ -1,4 +1,4 @@
-import "./post.css";
+import "./post.css"
 import moment from "moment";
 import { useState, useContext, useEffect } from "react";
 import { Search as SearchBS } from "react-bootstrap-icons";
@@ -25,7 +25,6 @@ const Post = (props) => {
     return () => {
       // cleanup function
     };
-
   }, [props.likedBy, state.user.userId]);
 
   const [showFullPost, setShowFullPost] = useState(false);
@@ -63,7 +62,7 @@ const Post = (props) => {
       // Make the API call to add the like
       const response = await axios.post(`/api/v1/post/${_id}/dolike`, {
         userId: state.user.userId,
-        profileImage : state.user.profileImage
+        profileImage: state.user.profileImage,
       });
 
       if (response.data === "Like added successfully") {
@@ -111,15 +110,22 @@ const Post = (props) => {
     navigate(`/post/${postId}`);
   };
 
-  const getProfile = async (userId) =>{
-    navigate(`/profile/${userId}`)
-  }
+  const getProfile = async (userId) => {
+    navigate(`/profile/${userId}`);
+  };
 
   return (
     <div className="singlePost">
-      <div className="postHead" onClick={() =>{ getProfile(props.userId) }}>
+      <div
+        className="postHead"
+        onClick={() => {
+          getProfile(props.userId);
+        }}
+      >
         <img
-          src={props.userImage || `https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`}
+          src={
+            props.userImage
+          }
           alt="Profile"
         />
         <div className="postNames">
@@ -128,15 +134,31 @@ const Post = (props) => {
         </div>
       </div>
       <div className="textContainer">
-        <p className={`${fullText.length <= 40 ? (props.image ? "smallText" : "bigText") : "smallText"}`}>
-          <span onClick={()=>{ seePost(props.postId) }}>{showFullPost ? fullText : splittedText}</span>
+        <p
+          className={`${
+            fullText.length <= 40
+              ? props.image
+                ? "smallText"
+                : "bigText"
+              : "smallText"
+          }`}
+        >
+          <span
+            onClick={() => {
+              seePost(props.postId);
+            }}
+          >
+            {showFullPost ? fullText : splittedText}
+          </span>
           {splittedText !== fullText && (
             <span className="see" onClick={toggleShowFullPost}>
               {showFullPost ? "...see less" : "...see more"}
             </span>
           )}
         </p>
-        {props.image && <img src={props.image} alt="post image" className="postImg" />}
+        {props.image && (
+          <img src={props.image} alt="post image" className="postImg" />
+        )}
       </div>
       {/* <p className="seeWhoLiked" onClick={()=>{ seePost(props.postId) }} >
         See Who Liked...
@@ -161,26 +183,33 @@ const Post = (props) => {
               : "Likes"
             : "Likes"}
         </button>
-        <button onClick={()=>{ seePost(props.postId) }}>
+        <button
+          onClick={() => {
+            seePost(props.postId);
+          }}
+        >
           <i className="bi bi-chat-square"></i>Comment
         </button>
         <button>
           <i className="bi bi-share-fill"></i>Share
         </button>
       </div>
-      {(state.user.isAdmin === true || state.user.userId === props.userId) ? (
+      {state.user.isAdmin === true || state.user.userId === props.userId ? (
         <div className="buttonContainer">
-        <button
-          className="editDelBtns"
-          onClick={() => props.edit(props.postId)}
-        >
-          <i className="bi bi-pencil-fill"></i>Edit
-        </button>
-        <button className="editDelBtns" onClick={() => props.del(props.postId)}>
-          <i className="bi bi-trash-fill"></i>Delete
-        </button>
-      </div>
-      ): null}
+          <button
+            className="editDelBtns"
+            onClick={() => props.edit(props.postId)}
+          >
+            <i className="bi bi-pencil-fill"></i>Edit
+          </button>
+          <button
+            className="editDelBtns"
+            onClick={() => props.del(props.postId)}
+          >
+            <i className="bi bi-trash-fill"></i>Delete
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 };

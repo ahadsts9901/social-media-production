@@ -679,3 +679,9 @@ div:where(.swal2-container) div:where(.swal2-loader) {
     height: 10em!important;
     object-fit: cover;
 }
+
+.profileActions{
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}

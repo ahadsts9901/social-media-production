@@ -57,7 +57,7 @@ const UserPost = (props) => {
       // Make the API call to add the like
       const response = await axios.post(`/api/v1/post/${_id}/dolike`, {
         userId: state.user.userId,
-        profileImage : state.user.profileImage
+        profileImage: state.user.profileImage
       });
 
       if (response.data === "Like added successfully") {
@@ -113,7 +113,9 @@ const UserPost = (props) => {
     <div className="singlePost">
       <div className="postHead" onClick={() => { getProfile(props.userId) }}>
         <img
-          src={props.userImage || `https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`}
+          src={
+            props.userImage
+          }
           alt="Profile"
         />
         <div className="postNames">
