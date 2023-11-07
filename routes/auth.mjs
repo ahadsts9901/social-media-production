@@ -48,6 +48,7 @@ router.post('/login', async (req, res, next) => {
                     firstName: result.firstName,
                     lastName: result.lastName,
                     email: req.body.email,
+                    _id: result._id
                 }, process.env.SECRET, {
                     expiresIn: '24h'
                 });
@@ -103,7 +104,8 @@ router.post('/signup', async (req, res, next) => {
                 email: req.body.email,
                 password: passwordHash,
                 isAdmin: false,
-                createdOn: new Date()
+                createdOn: new Date(),
+                profileImage : `https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`,
             });
 
             // Generate a token

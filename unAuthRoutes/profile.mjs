@@ -103,6 +103,19 @@ router.get('/likes/:postId', async (req, res, next) => {
     }
 });
 
+router.get('/comments/:postId', async (req, res, next) => {
+
+    const postId = new ObjectId(req.params.postId)
+
+    try {
+        const cursor = commentsCollection.find({ postId: postId }).sort({ _id: -1 });
+        let results = await cursor.toArray();
+        res.send(results);
+    } catch (error) {
+        console.error(error);
+    }
+});
+
 router.use((req, res) => {
     res.status(401).send({ message: "invalid token" })
     return;

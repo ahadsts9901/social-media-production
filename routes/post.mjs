@@ -126,6 +126,9 @@ router.post('/post', (req, res, next) => {
                 });
         } else {
             // Continue handling text data
+            if (req.body.postText.trim() === "") {
+                return;
+              }
             try {
                 const insertResponse = await col.insertOne({
                     title: req.body.postTitle || '', // Set to an empty string if not provided
