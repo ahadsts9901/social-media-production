@@ -14,7 +14,6 @@ import SinglePost from './components/singlePost/singlePost';
 import PostLikes from './components/postLikes/postLikes';
 import ChatScreen from './components/chatScreen/chatScreen';
 
-
 import { useEffect, useContext } from 'react';
 import { Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 import { GlobalContext } from "./context/context"
@@ -22,6 +21,7 @@ import { GlobalContext } from "./context/context"
 import "./App.css"
 import logo from "./components/assets/logoDark.png"
 import axios from "axios"
+// import io from 'socket.io-client';
 
 const App = () => {
 

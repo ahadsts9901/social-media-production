@@ -4,13 +4,13 @@ import {
   ArrowLeft,
   PlusLg,
   ThreeDotsVertical,
-  TrashFill,
 } from "react-bootstrap-icons";
 import { IoMdSend } from "react-icons/io";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import io from 'socket.io-client';
 
 import PrimaryChat from "../chatBaloons/primaryChat/primaryChat";
 import SecondaryChat from "../chatBaloons/secondaryChat/secondaryChat";
@@ -18,12 +18,47 @@ import SecondaryChat from "../chatBaloons/secondaryChat/secondaryChat";
 import { GlobalContext } from "../../context/context";
 
 const ChatScreen = () => {
+
   let { state, dispatch } = useContext(GlobalContext);
+
   const { userId } = useParams();
   const navigate = useNavigate();
   const [profile, setProfile] = useState();
   const [messages, setMessages] = useState();
   const [showMenu, setShowMenu] = useState(false);
+
+  // socket.io useEffect
+  // =====================================================================================
+
+  const baseUrl = "http://localhost:3000"
+
+  useEffect(() => {
+
+    const socket = io(baseUrl);
+    socket.on('connect', function () {
+      console.log("connected")
+    });
+    socket.on('disconnect', function (message) {
+      console.log("Socket disconnected from server: ", message);
+    });
+
+    socket.on(state.user.userId, (e) => {
+      console.log("a new message for you: ", e);
+      setMessages((prev) => {
+        return [e, ...prev]
+      });
+
+    })
+
+    return () => {
+
+      // cleanup function
+      socket.close();
+
+    }
+  }, [])
+
+  // =====================================================================================
 
   useEffect(() => {
     getProfile(userId);
