@@ -3,19 +3,28 @@ import path from 'path';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config'
 const __dirname = path.resolve();
+import cors from 'cors';
 
 import authRouter from './routes/auth.mjs'
 import postRouter from './routes/post.mjs'
 import chatRouter from './routes/chat.mjs'
 import commentsRouter from './routes/comments.mjs'
 import cookieParser from 'cookie-parser'
+import { createServer } from "http";
+import { Server as socketIo } from 'socket.io';
 // import { decode } from 'punycode';
 
 import unAuthProfileRouter from "./unAuthRoutes/profile.mjs"
+import { globalIoObject } from './core.mjs'
 
 const app = express();
 app.use(express.json()); // body parser
 app.use(cookieParser()); // cookie parser
+app.use(cors({
+    origin: ['http://localhost:3000'],
+    credentials: true
+}));
+
 
 app.use("/api/v1", authRouter)
 
@@ -51,6 +60,19 @@ app.use("*", express.static(path.join(__dirname, 'web/build')))
 
 app.get("/api/v1/ping", (req, res) => {
     res.send("OK");
+})
+
+// socket
+
+// this is the actual server which is running
+const server = createServer(app);
+
+// handing over server access to socket.io
+const io = new socketIo(server, { cors: { origin: "*", methods: "*", } });
+globalIoObject.io = io;
+
+io.on("connection", (socket) => {
+    console.log("New client connected with id: ", socket.id);
 })
 
 const PORT = process.env.PORT || 3000;

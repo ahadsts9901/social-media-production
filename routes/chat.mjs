@@ -6,6 +6,8 @@ const db = client.db("weapp");
 const userCollection = db.collection("auth");
 const chatCol = db.collection("chats");
 
+import { globalIoObject } from '../core.mjs';
+
 let router = express.Router();
 
 router.get('/chat', async (req, res, next) => {
@@ -42,16 +44,37 @@ router.post('/message', (req, res, next) => {
     return;
   }
 
+  const newMessage = {
+    fromName: `${req.decoded.firstName} ${req.decoded.lastName}`,
+    toName: req.body.toName,
+    from_id: new ObjectId(req.decoded._id),
+    to_id: new ObjectId(req.body.to_id),
+    message: req.body.chatMessage,
+    time: new Date(),
+  }
+
   try {
-    const insertResponse = await chatCol.insertOne({
-      fromName: `${req.decoded.firstName} ${req.decoded.lastName}`,
-      toName: req.body.toName,
-      from_id: new ObjectId(req.decoded._id),
-      to_id: new ObjectId(req.body.to_id),
-      message: req.body.chatMessage,
-      time: new Date(),
-    });
+    const insertResponse = await chatCol.insertOne(
+      newMessage
+    );
     console.log("Message inserted:", insertResponse);
+
+    // send message to socket server
+    newMessage._id = insertResponse.insertedId;
+
+    if (globalIoObject.io) {
+      console.log(`emiting message to ${req.body.to_id}`);
+      globalIoObject.io.emit(req.body.to_id, newMessage);
+
+      // notification
+
+      // globalIoObject.io.emit(
+      //   `notification-${req.body.to_id}`,
+      //   `new message from ${req.currentUser.firstName}: ${req.body.messageText}`
+      // );
+
+
+    }
 
     res.send({ message: 'Message sent' });
   } catch (e) {
