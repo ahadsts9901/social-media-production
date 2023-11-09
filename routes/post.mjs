@@ -98,6 +98,7 @@ router.post('/post', (req, res, next) => {
                                         userId: new ObjectId(req.body.userId),
                                         image: urlData[0], // Set to an empty string if no file was provided
                                         userImage: req.body.userImage,
+                                        likes: []
                                     });
                                     console.log(insertResponse);
                                     res.send('post created');
@@ -137,6 +138,7 @@ router.post('/post', (req, res, next) => {
                     email: req.body.userLogEmail,
                     userId: new ObjectId(req.body.userId),
                     userImage: req.body.userImage,
+                    likes:[]
                 });
                 console.log(insertResponse);
                 res.send('post created');
