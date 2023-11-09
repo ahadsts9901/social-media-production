@@ -160,6 +160,7 @@ h6 {
     background: rgb(98, 152, 148) !important;
     background: linear-gradient(306deg, rgba(98, 152, 148, 1) 0%, rgba(40, 70, 82, 1) 71%) !important;
     word-wrap: break-word !important;
+    word-break: break-all;
 }
 
 .bigText::-moz-scrollbar {

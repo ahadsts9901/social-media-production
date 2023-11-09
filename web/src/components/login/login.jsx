@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom';
 import logo from "../assets/logoDark.png"
 import { GlobalContext } from "../../context/context"
 
+import { baseUrl } from '../../core.mjs';
+ 
 const Login = () => {
 
   let { state, dispatch } = useContext(GlobalContext);
@@ -38,7 +40,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post(`/api/v1/login`, {
+      const response = await axios.post(`${baseUrl}/api/v1/login`, {
         email: email,
         password: passwordRef.current.value,
       },

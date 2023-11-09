@@ -592,7 +592,7 @@ div:where(.swal2-container) div:where(.swal2-loader) {
 
 .profileName {
     width: 100%;
-    text-align: left;
+    text-align: center!important;
     padding: 0.5em 0em;
     color: #252525;
 }
@@ -608,7 +608,7 @@ div:where(.swal2-container) div:where(.swal2-loader) {
 .profile {
     display: flex;
     justify-content: right;
-    align-items: start;
+    align-items: center!important;
     flex-direction: column;
     gap: 0.5em;
     padding: 1em;
@@ -625,7 +625,7 @@ div:where(.swal2-container) div:where(.swal2-loader) {
     color: #284352;
     position: relative;
     top: -9em;
-    left: 5em;
+    left: 3em!important;
     z-index: 10 !important;
 }
 

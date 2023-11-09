@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { GlobalContext } from '../../context/context';
 import Swal from "sweetalert2"
 
+import { baseUrl } from '../../core.mjs';
+ 
 const Home = () => {
 
   let { state, dispatch } = useContext(GlobalContext);
@@ -27,7 +29,7 @@ const Home = () => {
 
   const renderPost = () => {
     axios
-      .get(`/api/v1/feed`)
+      .get(`${baseUrl}/api/v1/feed`)
       .then(function (response) {
         let fetchedPosts = response.data;
         // console.log("fetched posts", fetchedPosts);
@@ -59,7 +61,7 @@ const Home = () => {
       showLoaderOnConfirm: true,
       preConfirm: async () => {
         try {
-          const response = await axios.delete(`/api/v1/post/${postId}`);
+          const response = await axios.delete(`${baseUrl}/api/v1/post/${postId}`);
           // console.log(response.data);
           Swal.fire({
             icon: 'success',
@@ -83,7 +85,7 @@ const Home = () => {
   }
 
   function editPost(postId) {
-    axios.get(`/api/v1/post/${postId}`)
+    axios.get(`${baseUrl}/api/v1/post/${postId}`)
       .then(response => {
         const post = response.data;
 
@@ -109,7 +111,7 @@ const Home = () => {
               return false;
             }
 
-            return axios.put(`/api/v1/post/${postId}`, {
+            return axios.put(`${baseUrl}/api/v1/post/${postId}`, {
               text: editedText
             })
               .then(response => {

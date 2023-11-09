@@ -14,20 +14,64 @@ import SinglePost from './components/singlePost/singlePost';
 import PostLikes from './components/postLikes/postLikes';
 import ChatScreen from './components/chatScreen/chatScreen';
 
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 import { GlobalContext } from "./context/context"
 
 import "./App.css"
 import logo from "./components/assets/logoDark.png"
 import axios from "axios"
-// import io from 'socket.io-client';
+import io from 'socket.io-client';
+
+import { baseUrl } from './core.mjs';
 
 const App = () => {
 
     const { state, dispatch } = useContext(GlobalContext);
+    const [notifications, setNotifications] = useState([]);
 
     const location = useLocation()
+
+    useEffect(() => {
+
+        const socket = io(baseUrl, {
+          secure: true,
+          withCredentials: true
+        })
+    
+    
+        socket.on('connect', function () {
+          console.log("connected in app.jsx")
+        });
+        socket.on('disconnect', function (message) {
+          console.log("Socket disconnected from server: ", message);
+        });
+    
+    
+        socket.on(`NOTIFICATIONS`, (e) => {
+            const location = window.location.pathname
+    
+            console.log("new item from server: ", location);
+    
+            if (!location.includes("chat")) {
+              setNotifications((prev) => {
+                return [e, ...prev]
+              })
+    
+            }
+
+
+
+            // setTimeout(() => {
+            //   setNotifications([])
+            // }, 10000)
+
+          })
+    
+        return () => {
+          socket.close();
+        }
+      }, [state])
 
     useEffect(() => {
         axios.interceptors.request.use(
@@ -50,7 +94,7 @@ const App = () => {
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
-                const resp = await axios.get(`/api/v1/ping`, {
+                const resp = await axios.get(`${baseUrl}/api/v1/ping`, {
                     withCredentials: true,
                 });
                 dispatch({

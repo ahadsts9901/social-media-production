@@ -7,6 +7,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { GlobalContext } from '../../context/context';
 import { PencilFill } from 'react-bootstrap-icons'
 
+import { baseUrl } from '../../core.mjs';
+ 
 const UnAuthProfile = () => {
 
   let { state, dispatch } = useContext(GlobalContext);

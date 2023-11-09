@@ -6,6 +6,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { GlobalContext } from '../../context/context';
 
+import { baseUrl } from '../../core.mjs';
+
 const Admin = () => {
 
   let { state, dispatch } = useContext(GlobalContext);
@@ -22,7 +24,7 @@ const Admin = () => {
   }, []);
 
   const renderAdminPost = () => {
-    axios.get(`/api/v1/feed/`)
+    axios.get(`${baseUrl}/api/v1/feed/`)
       .then((response) => {
         // Handle the data returned from the API
         const userAllPosts = response.data;
@@ -50,7 +52,7 @@ const Admin = () => {
       showLoaderOnConfirm: true,
       preConfirm: async () => {
         try {
-          const response = await axios.delete(`/api/v1/post/${postId}`);
+          const response = await axios.delete(`${baseUrl}/api/v1/post/${postId}`);
           // console.log(response.data);
           Swal.fire({
             icon: 'success',
@@ -74,7 +76,7 @@ const Admin = () => {
   }
 
   function editPost(postId) {
-    axios.get(`/api/v1/post/${postId}`)
+    axios.get(`${baseUrl}/api/v1/post/${postId}`)
       .then(response => {
         const post = response.data;
 
@@ -100,7 +102,7 @@ const Admin = () => {
               return false;
             }
 
-            return axios.put(`/api/v1/post/${postId}`, {
+            return axios.put(`${baseUrl}/api/v1/post/${postId}`, {
               text: editedText
             })
               .then(response => {

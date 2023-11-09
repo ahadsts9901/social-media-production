@@ -8,6 +8,8 @@ import '../main.css'
 // import { Link, useNavigate } from 'react-router-dom';
 // import logo from "../assets/logoDark.png"
 
+import { baseUrl } from '../../core.mjs';
+ 
 const Notifications = () => {
 
   return (

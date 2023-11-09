@@ -5,10 +5,20 @@ import axios from "axios";
 import { GlobalContext } from "../../context/context";
 import { useNavigate } from "react-router-dom";
 
+import { baseUrl } from "../../core.mjs";
+
 const UserPost = (props) => {
   let { state, dispatch } = useContext(GlobalContext);
 
-  const navigate = useNavigate()
+  const [totalComments, setTotalComments] = useState("");
+
+  const navigate = useNavigate();
+
+  const postId = props.postId;
+
+  useEffect(() => {
+    getComments(postId);
+  }, [postId]);
 
   useEffect(() => {
     if (!Array.isArray(props.likedBy)) {
@@ -50,15 +60,18 @@ const UserPost = (props) => {
 
       if (userHasLiked) {
         // console.log("You've already liked this post.");
-        undoLike(_id);
+        undoLike(_id, event);
         return;
       }
 
       // Make the API call to add the like
-      const response = await axios.post(`/api/v1/post/${_id}/dolike`, {
-        userId: state.user.userId,
-        profileImage: state.user.profileImage
-      });
+      const response = await axios.post(
+        `${baseUrl}/api/v1/post/${_id}/dolike`,
+        {
+          userId: state.user.userId,
+          profileImage: state.user.profileImage,
+        }
+      );
 
       if (response.data === "Like added successfully") {
         setIsLike(true);
@@ -80,9 +93,12 @@ const UserPost = (props) => {
   const undoLike = async (_id, event) => {
     try {
       // Make the API call to remove the like
-      const response = await axios.delete(`/api/v1/post/${_id}/undolike`, {
-        data: { userId: state.user.userId },
-      });
+      const response = await axios.delete(
+        `${baseUrl}/api/v1/post/${_id}/undolike`,
+        {
+          data: { userId: state.user.userId },
+        }
+      );
 
       if (response.data === "Like removed successfully") {
         setIsLike(false); // Update the like button
@@ -106,33 +122,59 @@ const UserPost = (props) => {
   };
 
   const getProfile = async (userId) => {
-    navigate(`/profile/${userId}`)
-  }
+    navigate(`/profile/${userId}`);
+  };
+
+  const getComments = async (postId) => {
+    try {
+      const response = await axios.get(`${baseUrl}/api/v1/comments/${postId}`);
+      const comments = response.data;
+      setTotalComments(comments.length);
+    } catch (error) {
+      console.error("An error occurred while fetching comments:", error);
+    }
+  };
 
   return (
     <div className="singlePost">
-      <div className="postHead" onClick={() => { getProfile(props.userId) }}>
-        <img
-          src={
-            props.userImage
-          }
-          alt="Profile"
-        />
+      <div
+        className="postHead"
+        onClick={() => {
+          getProfile(props.userId);
+        }}
+      >
+        <img src={props.userImage} alt="Profile" />
         <div className="postNames">
           <h2>{props.title}</h2>
           <p>{formattedTime}</p>
         </div>
       </div>
-      <div className="textContainer" >
-        <p className={`${fullText.length <= 40 ? (props.image ? "smallText" : "bigText") : "smallText"}`}>
-          <span onClick={() => { seePost(props.postId) }} >{showFullPost ? fullText : splittedText}</span>
+      <div className="textContainer">
+        <p
+          className={`${
+            fullText.length <= 40
+              ? props.image
+                ? "smallText"
+                : "bigText"
+              : "smallText"
+          }`}
+        >
+          <span
+            onClick={() => {
+              seePost(props.postId);
+            }}
+          >
+            {showFullPost ? fullText : splittedText}
+          </span>
           {splittedText !== fullText && (
             <span className="see" onClick={toggleShowFullPost}>
               {showFullPost ? "...see less" : "...see more"}
             </span>
           )}
         </p>
-        {props.image && <img src={props.image} alt="post image" className="postImg" />}
+        {props.image && (
+          <img src={props.image} alt="post image" className="postImg" />
+        )}
       </div>
       <div className="buttonContainer">
         <button
@@ -141,24 +183,30 @@ const UserPost = (props) => {
           }}
         >
           <i
-            className={`bi ${!isLike ? "bi-hand-thumbs-up" : "bi-hand-thumbs-up-fill"
-              }`}
-          ></i>{" "}
+            className={`bi ${
+              !isLike ? "bi-hand-thumbs-up" : "bi-hand-thumbs-up-fill"
+            }`}
+          ></i>
           <span id="likesCount">
-            {props.likedBy ? props.likedBy.length : 0}
-          </span>{" "}
-          {props.likedBy
-            ? props.likedBy.length == 1
-              ? "Like"
-              : "Likes"
-            : "Likes"}
+            Likes
+            {props.likedBy
+              ? props.likedBy.length == 0
+                ? ""
+                : ` ( ${props.likedBy.length} )`
+              : null}
+          </span>
         </button>
         <button
           onClick={() => {
             seePost(props.postId);
           }}
         >
-          <i className="bi bi-chat-square"></i>Comment
+          <i className="bi bi-chat-square"></i>
+          {totalComments == 0 ? (
+            "Comments"
+          ) : (
+            <p>Comments ( {totalComments} )</p>
+          )}
         </button>
         <button>
           <i className="bi bi-share-fill"></i>Share

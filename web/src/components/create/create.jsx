@@ -9,6 +9,8 @@ import { useState } from "react";
 // import { Link, useNavigate } from 'react-router-dom';
 // import logo from "../assets/logoDark.png"
 
+import { baseUrl } from '../../core.mjs';
+ 
 const Create = () => {
   const { state, dispatch } = useContext(GlobalContext);
 
@@ -36,7 +38,7 @@ const Create = () => {
     formData.append("userImage", state.user.profileImage);
 
     axios
-      .post(`/api/v1/post`, formData, {
+      .post(`${baseUrl}/api/v1/post`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then(function (response) {

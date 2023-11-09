@@ -9,6 +9,8 @@ import { Post } from "../post/post";
 import Swal from "sweetalert2"
 import SingleComment from "../singleComment/SingleComment"
 
+import { baseUrl } from '../../core.mjs';
+ 
 const SinglePost = () => {
   let { state, dispatch } = useContext(GlobalContext);
   const [post, setPost] = useState();
@@ -31,7 +33,7 @@ const SinglePost = () => {
 
   const seePost = async (postId) => {
     try {
-      const response = await axios.get(`/api/v1/post/${postId}`);
+      const response = await axios.get(`${baseUrl}/api/v1/post/${postId}`);
       const singlePostData = response.data;
       setPost(singlePostData);
     } catch (error) {
@@ -60,7 +62,7 @@ const SinglePost = () => {
       showLoaderOnConfirm: true,
       preConfirm: async () => {
         try {
-          const response = await axios.delete(`/api/v1/post/${postId}`);
+          const response = await axios.delete(`${baseUrl}/api/v1/post/${postId}`);
           // console.log(response.data);
           Swal.fire({
             icon: 'success',
@@ -84,7 +86,7 @@ const SinglePost = () => {
   }
 
   function editPost(postId) {
-    axios.get(`/api/v1/post/${postId}`)
+    axios.get(`${baseUrl}/api/v1/post/${postId}`)
       .then(response => {
         const post = response.data;
 
@@ -110,7 +112,7 @@ const SinglePost = () => {
               return false;
             }
 
-            return axios.put(`/api/v1/post/${postId}`, {
+            return axios.put(`${baseUrl}/api/v1/post/${postId}`, {
               text: editedText
             })
               .then(response => {
@@ -165,9 +167,10 @@ const SinglePost = () => {
     formData.append("userName", `${state.user.firstName} ${state.user.lastName}`);
     formData.append("postId", postId.postId);
     formData.append("comment", commentRef.current.value);
+    formData.append("authorId", post.userId);
 
     axios
-      .post(`/api/v1/comment`, formData, {
+      .post(`${baseUrl}/api/v1/comment`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then(function (response) {
@@ -189,7 +192,7 @@ const SinglePost = () => {
 
   const getComments = async (postId) => {
     try {
-      const response = await axios.get(`/api/v1/comments/${postId}`);
+      const response = await axios.get(`${baseUrl}/api/v1/comments/${postId}`);
       const comments = response.data;
       // console.log(comments);
       setComments(comments)
@@ -213,7 +216,7 @@ const SinglePost = () => {
       showLoaderOnConfirm: true,
       preConfirm: async () => {
         try {
-          const response = await axios.delete(`/api/v1/comment/${commentId}`);
+          const response = await axios.delete(`${baseUrl}/api/v1/comment/${commentId}`);
           // console.log(response.data);
           Swal.fire({
             icon: 'success',
@@ -262,7 +265,7 @@ const SinglePost = () => {
           return false;
         }
 
-        return axios.put(`/api/v1/comment/${commentId}`, {
+        return axios.put(`${baseUrl}/api/v1/comment/${commentId}`, {
           comment: editedComment
         })
           .then(response => {
@@ -328,7 +331,7 @@ const SinglePost = () => {
         </form>
         {
           comments ? comments.map((comment, index) => (
-            <SingleComment userName={comment.userName} userId={comment.userId} image={comment.userImage} comment={comment.comment} time={comment.time} _id={comment._id} del={deleteComment} edit={editComment} />
+            <SingleComment key={index} authorId={comment.authorId} userName={comment.userName} userId={comment.userId} image={comment.userImage} comment={comment.comment} time={comment.time} _id={comment._id} del={deleteComment} edit={editComment} />
           )) : null
         }
       </div>

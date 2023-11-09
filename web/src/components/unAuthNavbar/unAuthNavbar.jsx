@@ -2,6 +2,8 @@
 import { Link } from 'react-router-dom';
 import './unAuthNavbar.css';
 
+import { baseUrl } from '../../core.mjs';
+ 
 const UnAuthNavbar = () => {
 
     return (

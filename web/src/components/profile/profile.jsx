@@ -9,6 +9,8 @@ import { useParams } from "react-router-dom";
 import { GlobalContext } from "../../context/context";
 import { PencilFill } from "react-bootstrap-icons";
 
+import { baseUrl } from '../../core.mjs';
+ 
 const Profile = () => {
   let { state, dispatch } = useContext(GlobalContext);
 
@@ -52,7 +54,7 @@ const Profile = () => {
         formData.append("userId", state.user.userId);
 
         axios
-          .post(`/api/v1/profilePicture`, formData, {
+          .post(`${baseUrl}/api/v1/profilePicture`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
           })
           .then(function (response) {
@@ -75,7 +77,7 @@ const Profile = () => {
 
   const renderCurrentUserPost = () => {
     axios
-      .get(`/api/v1/posts/${userParamsId || ""}`)
+      .get(`${baseUrl}/api/v1/posts/${userParamsId || ""}`)
       .then((response) => {
         // Handle the data returned from the API
         const userAllPosts = response.data;
@@ -91,7 +93,7 @@ const Profile = () => {
 
   const getProfile = async () => {
     try {
-      const response = await axios.get(`/api/v1/profile/${userParamsId || ""}`);
+      const response = await axios.get(`${baseUrl}/api/v1/profile/${userParamsId || ""}`);
       setProfile(response.data.data);
     } catch (error) {
       console.log(error.data);
@@ -114,7 +116,7 @@ const Profile = () => {
       showLoaderOnConfirm: true,
       preConfirm: async () => {
         try {
-          const response = await axios.delete(`/api/v1/post/${postId}`);
+          const response = await axios.delete(`${baseUrl}/api/v1/post/${postId}`);
           // console.log(response.data);
           Swal.fire({
             icon: "success",
@@ -139,7 +141,7 @@ const Profile = () => {
 
   function editPost(postId) {
     axios
-      .get(`/api/v1/post/${postId}`)
+      .get(`${baseUrl}/api/v1/post/${postId}`)
       .then((response) => {
         const post = response.data;
 
@@ -165,7 +167,7 @@ const Profile = () => {
             }
 
             return axios
-              .put(`/api/v1/post/${postId}`, {
+              .put(`${baseUrl}/api/v1/post/${postId}`, {
                 text: editedText,
               })
               .then((response) => {
@@ -217,7 +219,7 @@ const Profile = () => {
       preConfirm: () => {
         // Handle the logout logic here
         return axios
-          .post(`/api/v1/logout`, {})
+          .post(`${baseUrl}/api/v1/logout`, {})
           .then(function (response) {
             dispatch({
               type: "USER_LOGOUT",
@@ -255,7 +257,7 @@ const Profile = () => {
             <h2 className="profileName">
               {profile.firstName} {profile.lastName}
               {state.user.userId === profile.userId ? (
-                <PencilFill className="pencil" />
+                <PencilFill style={{fontSize: "0.5em"}} className="pencil" />
               ) : null}
             </h2>
 
@@ -278,7 +280,7 @@ const Profile = () => {
             <div className="profileImageContainer">
               <label className="editIMG" htmlFor="profileImage">
                 {state.user.userId === profile.userId ? (
-                  <PencilFill className="pencil" />
+                  <PencilFill style={{fontSize:"0.8em"}} className="pencil" />
                 ) : null}
               </label>
               <input

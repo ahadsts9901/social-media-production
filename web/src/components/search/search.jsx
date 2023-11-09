@@ -9,6 +9,8 @@ import '../main.css'
 import { Search as SearchBS, ArrowLeft } from "react-bootstrap-icons"
 import { Post } from "../post/post"
 
+import { baseUrl } from '../../core.mjs';
+ 
 const Search = () => {
 
   const [posts, setPosts] = useState([]);
@@ -17,7 +19,7 @@ const Search = () => {
   const search = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.get(`/api/v1/search?q=${searchInputRef.current.value}`);
+      const response = await axios.get(`${baseUrl}/api/v1/search?q=${searchInputRef.current.value}`);
       // console.log(response.data);
 
       setPosts([...response.data]);

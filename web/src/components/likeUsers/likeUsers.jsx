@@ -2,8 +2,9 @@ import './likeUsers.css';
 import '../main.css'
 import React, { useContext } from 'react';
 import { GlobalContext } from '../../context/context';
-import profileImg from "../assets/profileimg.webp"
 
+import { baseUrl } from '../../core.mjs';
+ 
 const LikeUsers = (props) => {
 
   let { state, dispatch } = useContext(GlobalContext);

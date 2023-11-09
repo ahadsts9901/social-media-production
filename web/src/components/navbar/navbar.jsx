@@ -6,6 +6,8 @@ import './navbar.css';
 // import logo from '../assets/logoDark.png';
 import axios from 'axios';
 
+import { baseUrl } from '../../core.mjs';
+ 
 const Navbar = () => {
     const { state, dispatch } = useContext(GlobalContext);
 

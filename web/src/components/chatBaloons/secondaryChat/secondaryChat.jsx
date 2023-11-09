@@ -4,6 +4,8 @@ import { ChevronDown, ChevronUp, TrashFill, PencilFill } from "react-bootstrap-i
 import moment from "moment"
 import { GlobalContext } from "../../../context/context";
 
+import { baseUrl } from '../../../core.mjs';
+ 
 const SecondaryChat = (props) => {
 
   let { state, dispatch } = useContext(GlobalContext);

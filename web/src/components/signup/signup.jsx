@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import logo from "../assets/logoDark.png"
 import { GlobalContext } from "../../context/context"
 
+import { baseUrl } from '../../core.mjs';
+ 
 const Signup = () => {
 
   const { state, dispatch } = useContext(GlobalContext);
@@ -62,7 +64,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post(`/api/v1/signup`, {
+      const response = await axios.post(`${baseUrl}/api/v1/signup`, {
         firstName: firstName,
         lastName: lastName,
         email: email,
@@ -84,7 +86,7 @@ const Signup = () => {
       // navigate('/');
       window.location.pathname = "/";
     } catch (error) {
-      console.log(error.response.data);
+      console.log(error);
       setValidationMessage('User Already Exists');
       setSuccessMessage("")
     }

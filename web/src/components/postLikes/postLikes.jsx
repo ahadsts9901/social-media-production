@@ -6,6 +6,8 @@ import { GlobalContext } from "../../context/context";
 import { useNavigate, useParams } from "react-router-dom";
 import LikeUsers from "../likeUsers/likeUsers";
 
+import { baseUrl } from '../../core.mjs';
+ 
 const PostLikes = (props) => {
   let { state, dispatch } = useContext(GlobalContext);
   const [likeUsers, setLikeUsers] = useState()
@@ -26,7 +28,7 @@ const PostLikes = (props) => {
 
   const getlikedUsers = async(postId) => {
     try {
-      const response = await axios.get(`/api/v1/likes/${postId}`);
+      const response = await axios.get(`${baseUrl}/api/v1/likes/${postId}`);
       const singlePostLikes = response.data;
       setLikeUsers(singlePostLikes);
     } catch (error) {

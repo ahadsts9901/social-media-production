@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import "./chatScreen.css";
+import "./ChatScreen.css";
 import {
   ArrowLeft,
   PlusLg,
@@ -17,6 +17,8 @@ import SecondaryChat from "../chatBaloons/secondaryChat/secondaryChat";
 
 import { GlobalContext } from "../../context/context";
 
+import { baseUrl } from '../../core.mjs';
+
 const ChatScreen = () => {
 
   let { state, dispatch } = useContext(GlobalContext);
@@ -30,33 +32,40 @@ const ChatScreen = () => {
   // socket.io useEffect
   // =====================================================================================
 
-  const baseUrl = "http://localhost:3000"
-
   useEffect(() => {
 
+  const fetchData = async () => {
     const socket = io(baseUrl);
+
     socket.on('connect', function () {
       console.log("connected")
     });
+
     socket.on('disconnect', function (message) {
       console.log("Socket disconnected from server: ", message);
     });
 
-    socket.on(state.user.userId, (e) => {
+    socket.on(state.user.userId, async (e) => {
       console.log("a new message for you: ", e);
-      setMessages((prev) => {
-        return [e, ...prev]
-      });
 
-    })
+      try {
+        const response = await axios.get(`${baseUrl}/api/v1/messages/${userId}`);
+        setMessages([...response.data]);
+      } catch (error) {
+        console.log(error);
+      }
+    });
 
     return () => {
-
       // cleanup function
       socket.close();
+    };
+  };
 
-    }
-  }, [])
+  fetchData();
+
+}, []);
+
 
   // =====================================================================================
 
@@ -67,7 +76,7 @@ const ChatScreen = () => {
 
   const getProfile = async (userId) => {
     try {
-      const response = await axios.get(`/api/v1/profile/${userId}`);
+      const response = await axios.get(`${baseUrl}/api/v1/profile/${userId}`);
       setProfile(response.data.data);
     } catch (error) {
       console.log(error.response.data);
@@ -85,7 +94,7 @@ const ChatScreen = () => {
     }
 
     try {
-      const response = await axios.post(`/api/v1/message`, {
+      const response = await axios.post(`${baseUrl}/api/v1/message`, {
         to_id: userId,
         toName: `${profile.firstName} ${profile.lastName}`,
         chatMessage: chatText.current.value,
@@ -109,7 +118,7 @@ const ChatScreen = () => {
 
   const getMessages = async () => {
     try {
-      const response = await axios.get(`/api/v1/messages/${userId}`);
+      const response = await axios.get(`${baseUrl}/api/v1/messages/${userId}`);
       // console.log(response.data);
       setMessages([...response.data]);
     } catch (error) {
@@ -132,7 +141,7 @@ const ChatScreen = () => {
       showLoaderOnConfirm: true,
       preConfirm: async () => {
         try {
-          const response = await axios.delete(`/api/v1/message/${messageId}`);
+          const response = await axios.delete(`${baseUrl}/api/v1/message/${messageId}`);
           // console.log(response.data);
           Swal.fire({
             icon: "success",
@@ -181,7 +190,7 @@ const ChatScreen = () => {
         }
 
         try {
-          const response = await axios.put(`/api/v1/message/${messageId}`, {
+          const response = await axios.put(`${baseUrl}/api/v1/message/${messageId}`, {
             message: editedMessage,
           });
 
@@ -224,7 +233,7 @@ const ChatScreen = () => {
       preConfirm: async () => {
         try {
           const response = await axios.delete(
-            `/api/v1/messages/${from_id}/${to_id}`
+            `${baseUrl}/api/v1/messages/${from_id}/${to_id}`
           );
           // console.log(response.data);
           Swal.fire({

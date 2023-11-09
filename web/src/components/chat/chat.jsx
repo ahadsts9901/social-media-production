@@ -2,11 +2,13 @@ import React, { useEffect, useState, useContext } from 'react'
 import "./chat.css"
 import "../chatScreen/ChatScreen.css"
 import { ArrowLeft, ThreeDotsVertical, Search as SearchBs } from "react-bootstrap-icons"
-import SingleChatUser_ from '../singleChatUser/SingleChatUser_'
+import SingleChatUser from '../singleChatUser/singleChatUser'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { GlobalContext } from '../../context/context';
 
+import { baseUrl } from '../../core.mjs';
+ 
 const Chat = () => {
   
   let { state, dispatch } = useContext(GlobalContext);
@@ -17,7 +19,7 @@ const Chat = () => {
 
   useEffect(() => {
     const allUsersChat = async () => {
-      axios.get(`/api/v1/chat`)
+      axios.get(`${baseUrl}/api/v1/chat`)
         .then((response) => {
           const allUsers = response.data;
           setUsers(allUsers)
@@ -60,7 +62,7 @@ const Chat = () => {
             ) : (
               users.map((user, index) => (
 
-                <SingleChatUser_ image={user.profileImage} userName={`${user.firstName} ${user.lastName}`} userId={user._id} userEmail={user.email}/>
+                <SingleChatUser image={user.profileImage} userName={`${user.firstName} ${user.lastName}`} userId={user._id} userEmail={user.email}/>
 
               ))
             ))}
