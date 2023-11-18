@@ -13,6 +13,7 @@ import UnAuthNavbar from './components/unAuthNavbar/unAuthNavbar';
 import SinglePost from './components/singlePost/singlePost';
 import PostLikes from './components/postLikes/postLikes';
 import ChatScreen from './components/chatScreen/chatScreen';
+import CommentLikes from './components/commentLikes/commentLikes'
 
 import { useEffect, useContext, useState } from 'react';
 import { Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
@@ -24,6 +25,8 @@ import axios from "axios"
 import io from 'socket.io-client';
 
 import { baseUrl } from './core.mjs';
+import ForgotPassword from './components/forgotPassword/forgotPassword.jsx';
+import ForgotPasswordComplete from './components/forgotPasswordComplete/forgotPasswordComplete.jsx';
 
 const App = () => {
 
@@ -141,6 +144,7 @@ const App = () => {
                         <Route path="/games" element={<Games />} />
                         <Route path="/post/:postId" element={<SinglePost />} />
                         <Route path="/likes/post/:postId" element={<PostLikes />} />
+                        <Route path="/likes/comment/:commentId" element={<CommentLikes />} />
                         <Route path="*" element={<Navigate to="/" replace={true} />} />
                     </Routes>
 
@@ -163,6 +167,7 @@ const App = () => {
                         <Route path="/admin" element={<Admin />} />
                         <Route path="/post/:postId" element={<SinglePost />} />
                         <Route path="/likes/post/:postId" element={<PostLikes />} />
+                        <Route path="/likes/comment/:commentId" element={<CommentLikes />} />
                         <Route path="*" element={<Navigate to="/" replace={true} />} />
                     </Routes>
 
@@ -184,6 +189,9 @@ const App = () => {
                         <Route path="/profile/:userParamsId" element={<Profile />} />
                         <Route path="/post/:postId" element={<SinglePost />} />
                         <Route path="/likes/post/:postId" element={<PostLikes />} />
+                        <Route path="/likes/comment/:commentId" element={<CommentLikes/>} />
+                        <Route path="/forgot-password" element={<ForgotPassword/>} />
+                        <Route path="/forgot-password-complete" element={<ForgotPasswordComplete/>} />
 
                         <Route path="*" element={<Navigate to="/login" replace={true} />} />
                     </Routes>

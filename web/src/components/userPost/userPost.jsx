@@ -173,7 +173,7 @@ const UserPost = (props) => {
           )}
         </p>
         {props.image && (
-          <img src={props.image} alt="post image" className="postImg" />
+          <img src={props.image} width="425" height="300" alt="post image" className="postImg" />
         )}
       </div>
       <div className="buttonContainer">

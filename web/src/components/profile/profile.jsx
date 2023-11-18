@@ -10,7 +10,7 @@ import { GlobalContext } from "../../context/context";
 import { PencilFill } from "react-bootstrap-icons";
 
 import { baseUrl } from '../../core.mjs';
- 
+
 const Profile = () => {
   let { state, dispatch } = useContext(GlobalContext);
 
@@ -53,6 +53,16 @@ const Profile = () => {
         formData.append("profileImage", fileInputRef.current.files[0]);
         formData.append("userId", state.user.userId);
 
+        Swal.fire({
+          title: `<span class="loader"></span>`,
+          text: "Uploading...please don't cancel",
+          allowOutsideClick: false,
+          showConfirmButton: false,
+          onBeforeOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
         axios
           .post(`${baseUrl}/api/v1/profilePicture`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
@@ -73,6 +83,76 @@ const Profile = () => {
         setSelectedImage("");
       }
     });
+  }
+
+  const changeName = async () => {
+    Swal.fire({
+      title: 'Update Name',
+      html:
+        `<input id="swal-input1" minLength="3" maxLength="10" class="swal2-input" placeholder="First Name" value="${state.user.firstName}">` +
+        `<input id="swal-input2" minLength="3" maxLength="10" class="swal2-input" placeholder="Last Name" value="${state.user.lastName}">`,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Update',
+      cancelButtonText: 'Cancel',
+      cancelButtonColor: " #284352",
+      confirmButtonColor: " #284352",
+      preConfirm: async () => {
+        const firstName = document.getElementById('swal-input1').value;
+        const lastName = document.getElementById('swal-input2').value;
+
+        // Perform input validation 
+
+        const validateInput = (inputId) => {
+          const inputElement = document.getElementById(inputId);
+          const inputValue = inputElement.value.trim();
+
+          if (inputValue === '') {
+            inputElement.classList.add('swal-validation-error');
+            return false;
+          } else {
+            inputElement.classList.remove('swal-validation-error');
+            return true;
+          }
+        }
+
+        if (!validateInput('swal-input1') || !validateInput('swal-input2')) {
+          Swal.showValidationMessage('Please fill in both fields');
+          return false;
+        }
+
+        Swal.fire({
+          title: `<span class="loader"></span>`,
+          text: "Uploading...please don't cancel",
+          allowOutsideClick: false,
+          showConfirmButton: false,
+          onBeforeOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        try {
+
+          const updateNameResponse = await axios.put(`${baseUrl}/api/v1/update-name`, {
+            firstName: firstName,
+            lastName: lastName,
+            userId: state.user.userId
+          })
+
+          Swal.fire({
+            icon: "success",
+            title: "Profile Updated",
+            timer: 1000,
+            showConfirmButton: false,
+          });
+
+        } catch (error) {
+          console.log(error);
+        }
+
+      }
+    });
+
   }
 
   const renderCurrentUserPost = () => {
@@ -257,7 +337,7 @@ const Profile = () => {
             <h2 className="profileName">
               {profile.firstName} {profile.lastName}
               {state.user.userId === profile.userId ? (
-                <PencilFill style={{fontSize: "0.5em"}} className="pencil" />
+                <PencilFill onClick={changeName} style={{ fontSize: "0.5em" }} className="pencil" />
               ) : null}
             </h2>
 
@@ -280,7 +360,7 @@ const Profile = () => {
             <div className="profileImageContainer">
               <label className="editIMG" htmlFor="profileImage">
                 {state.user.userId === profile.userId ? (
-                  <PencilFill style={{fontSize:"0.8em"}} className="pencil" />
+                  <PencilFill style={{ fontSize: "0.8em" }} className="pencil" />
                 ) : null}
               </label>
               <input
@@ -307,7 +387,7 @@ const Profile = () => {
             ) : (
               userPosts.map((post, index) =>
                 state.user.userId === profile.userId ||
-                state.isAdmin == true ? (
+                  state.isAdmin == true ? (
                   <UserPost
                     key={index}
                     title={post.title}

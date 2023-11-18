@@ -1,31 +1,101 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./SingleComment.css";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown, ChevronUp } from "react-bootstrap-icons";
+import { ArrowUpRight, ChevronDown, ChevronUp, HandThumbsUp, HandThumbsUpFill } from "react-bootstrap-icons";
 import { GlobalContext } from "../../context/context";
-
+import axios from "axios";
 import { baseUrl } from "../../core.mjs";
 
 const SingleComment = (props) => {
-  let { state, dispatch } = useContext(GlobalContext);
-
+  const { state, dispatch } = useContext(GlobalContext);
   const [showFullComment, setShowFullComment] = useState(false);
   const formattedTime = moment(props.time).fromNow();
   const fullComment = props.comment;
   const splittedComment = props.comment.split(" ").slice(0, 20).join(" ");
-
   const [showAction, setShowAction] = useState(false);
+  const [isLike, setIsLike] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+
+    const userHasLiked = props.likes.some(
+      (likeUser) => likeUser.userId === state.user.userId
+    );
+
+    setIsLike(userHasLiked);
+
+    return () => {
+      // cleanup function
+    };
+  }, [props.likes, state.user.userId]);
 
   const toggleShowFullComment = () => {
     setShowFullComment(!showFullComment);
   };
 
+  const doLike = async (commentId) => {
+    try {
+
+      const userHasLiked = props.likes.some(
+        (likeUser) => likeUser.userId === state.user.userId
+      );
+
+      if (userHasLiked) {
+        // Undo like if already liked
+        await undoLike(commentId);
+        return;
+      }
+
+      // Make the API call to add the like
+      const response = await axios.post(
+        `${baseUrl}/api/v1/comment/${commentId}/dolike`,
+        {
+          userId: state.user.userId,
+          decoded: state.user,
+          profileImage: state.user.profileImage,
+        }
+      );
+
+      if (response.data === "Like added successfully") {
+        setIsLike(true);
+        // Update the like button
+      } else {
+        // Handle the case where the API fails
+        console.log("Failed to add like.");
+      }
+    } catch (error) {
+      // Handle error
+      console.log("Error adding like:", error);
+    }
+  };
+
+  const undoLike = async (commentId) => {
+    try {
+      // Make the API call to remove the like
+      const response = await axios.delete(
+        `${baseUrl}/api/v1/comment/${commentId}/undolike`,
+        {
+          data: { userId: state.user.userId },
+        }
+      );
+
+      if (response.data === "Like removed successfully") {
+        setIsLike(false); // Update the like button
+      } else {
+        // Handle the case where the undo like API fails
+        console.log("Failed to remove like.");
+      }
+    } catch (error) {
+      // Handle error
+      console.log("Error removing like:", error);
+    }
+  };
+
   return (
     <div className="singleComment">
-      {state.user.userId === props.userId || props.authorId === state.user.userId || state.user.isAdmin == true ? (
+      {state.user.userId === props.userId || props.authorId === state.user.userId || state.user.isAdmin === true ? (
         <div className="actionContComment">
           {showAction ? (
             <>
@@ -35,7 +105,7 @@ const SingleComment = (props) => {
                 }}
               />
               <div className="commentMenu">
-                {(state.user.userId === props.userId) && (
+                {state.user.userId === props.userId && (
                   <p
                     onClick={(event) => {
                       props.edit(props._id, event);
@@ -44,7 +114,6 @@ const SingleComment = (props) => {
                     Edit
                   </p>
                 )}
-
                 <p
                   onClick={() => {
                     props.del(props._id);
@@ -75,7 +144,6 @@ const SingleComment = (props) => {
       </div>
       <div className="commentTextContainer">
         <p className="commentText">
-          <span className="leftFloatComment">mm</span>
           <span>{showFullComment ? fullComment : splittedComment}</span>
           {splittedComment !== fullComment && (
             <span className="see" onClick={toggleShowFullComment}>
@@ -83,6 +151,24 @@ const SingleComment = (props) => {
             </span>
           )}
         </p>
+      </div>
+      <div className="likesContComment">
+        <span id="commentLikeBtn" onClick={() => {
+          doLike(props._id);
+        }}>
+          <span>
+            {isLike ? <HandThumbsUpFill /> : <HandThumbsUp />}
+
+          </span>
+          <p>Likes</p>
+          {
+            props.likes.length > 0 ? `( ${props.likes.length} )` : null
+          }
+        </span>
+        <span id="totalCommentLikes" onClick={() => { navigate(`/likes/comment/${props._id}`) }}>
+          <ArrowUpRight />
+          <p>See All</p>
+        </span>
       </div>
     </div>
   );

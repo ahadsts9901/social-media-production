@@ -4,22 +4,24 @@ import React, {
 import axios from 'axios';
 // import Swal from 'sweetalert2';
 import '../signup/signup.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from "../assets/logoDark.png"
 import { GlobalContext } from "../../context/context"
 
 import { baseUrl } from '../../core.mjs';
- 
+
 const Login = () => {
+
+  const navigate = useNavigate()
 
   let { state, dispatch } = useContext(GlobalContext);
 
-  const [email, setEmail] = useState('');
   const [validationMessage, setValidationMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isShowPassword, setShowPassword] = useState(false);
 
   const passwordRef = useRef(null);
+  const emailRef = useRef(null);
 
   // const navigate = useNavigate()
 
@@ -27,13 +29,13 @@ const Login = () => {
   const login = async (event) => {
     event.preventDefault();
 
-    if (!email.endsWith("@gmail.com")) {
+    if (!emailRef.current.value.endsWith("@gmail.com")) {
       setValidationMessage("Invalid email address");
       setSuccessMessage("")
       return;
     }
 
-    if (email.trim() === '' || passwordRef.current.value.trim() === '') {
+    if (emailRef.current.value.trim() === '' || passwordRef.current.value.trim() === '') {
       setValidationMessage("Please fill required fields");
       setSuccessMessage("")
       return;
@@ -41,7 +43,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(`${baseUrl}/api/v1/login`, {
-        email: email,
+        email: emailRef.current.value,
         password: passwordRef.current.value,
       },
         {
@@ -84,13 +86,12 @@ const Login = () => {
           <h2 className="center mobileHeading">Welcome<br />Back</h2>
         </div>
         <input
+          ref={emailRef}
           required
           id="email-login"
           type="email"
           className="input"
           placeholder="example@gmail.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
         />
         <div className="r jcsb aic pass">
           <input
@@ -108,7 +109,7 @@ const Login = () => {
             onClick={() => setShowPassword(!isShowPassword)}
           ></i>
         </div>
-        {/* <p className='forget'>Forgot Password</p> */}
+        <p onClick={() => { navigate("/forgot-password") }} className='forget'>Forgot Password</p>
         <p className="validationMessage">{validationMessage}</p>
         <p className="successMessage">{successMessage}</p>
         <button type="submit" className="button">

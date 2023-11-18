@@ -46,6 +46,7 @@ h6 {
     width: 100%;
     height: 100%;
     flex-wrap: nowrap !important;
+    overflow-y: auto;
 }
 
 .noPostMessage, .loadContainer {
@@ -68,6 +69,40 @@ h6 {
     display: inline-block;
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
+}
+
+.result::-moz-scrollbar {
+    width: 4px;
+    background-color: #28435200;
+}
+
+.result::-moz-scrollbar-thumb {
+    width: 4px !important;
+    background-color: #284352;
+    border: none;
+    border-radius: 5px !important;
+}
+
+.result::-moz-scrollbar-track {
+    width: 4px;
+    background-color: #28435200;
+}
+
+.result::-webkit-scrollbar-track {
+    width: 4px;
+    background-color: #28435200;
+}
+
+.result::-webkit-scrollbar {
+    width: 4px;
+    background-color: #28435200;
+}
+
+.result::-webkit-scrollbar-thumb {
+    width: 4px !important;
+    background-color: #284352;
+    border: none;
+    border-radius: 5px !important;
 }
 
 @keyframes rotation {

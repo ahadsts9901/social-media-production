@@ -178,7 +178,7 @@ const Post = (props) => {
           )}
         </p>
         {props.image && (
-          <img src={props.image} alt="post image" className="postImg" />
+          <img width="425" height="300" src={props.image} alt="post image" className="postImg" />
         )}
       </div>
       {/* <p className="seeWhoLiked" onClick={()=>{ seePost(props.postId) }} >

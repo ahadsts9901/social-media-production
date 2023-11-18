@@ -251,9 +251,9 @@ div:where(.swal2-container) div:where(.swal2-loader) {
     border-color: #15182b #f6f2f1 !important;
 }
 
-#root>div{
-    width: 100%!important;
-    height: 100%!important;
+#root>div {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .authContainer {
@@ -401,9 +401,11 @@ a.center {
 
 .forget {
     width: 100%;
-    font-size: 1em !important;
+    font-size: 1.3em !important;
     text-align: right;
     padding: 1em 2em;
+    color: #284352 !important;
+    cursor: pointer;
 }
 
 form {
@@ -470,6 +472,18 @@ form {
     line-height: 1.8em;
 }
 
+.forgotWhite>p>a{
+    color: #f6f2f1!important;
+}
+
+/* .otpIns{
+    font-size: 2em;
+    width: 100%;
+    text-align: left;
+    color: #284352!important;
+    padding-left: 1em;
+} */
+
 @media only screen and (max-width:785px) {
 
     .logoCont {
@@ -500,18 +514,18 @@ form {
 @media only screen and (max-width:425px) {
 
     body::-moz-scrollbar {
-        display: none!important;
+        display: none !important;
     }
-    
+
     body::-webkit-scrollbar {
-        display: none!important;
+        display: none !important;
     }
-    
+
     #root::-moz-scrollbar {
-        display: none!important;
+        display: none !important;
     }
-    
+
     #root::-webkit-scrollbar {
-        display: none!important;
+        display: none !important;
     }
 }

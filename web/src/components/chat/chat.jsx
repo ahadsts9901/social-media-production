@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
 import "./chat.css"
-import "../chatScreen/ChatScreen.css"
+import "../chatScreen/chatScreen.css"
 import { ArrowLeft, ThreeDotsVertical, Search as SearchBs } from "react-bootstrap-icons"
 import SingleChatUser from '../singleChatUser/singleChatUser'
 import axios from 'axios'

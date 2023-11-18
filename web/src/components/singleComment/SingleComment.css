@@ -79,3 +79,28 @@
     float: left;
     color: #00000000;
 }
+
+#commentLikeBtn,#totalCommentLikes{
+    margin-top: 1em;
+    font-size: 0.7em;
+    border-radius: 5px;
+    padding: 0.5em;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    cursor: pointer;
+}
+
+#commentLikeBtn:hover,#totalCommentLikes:hover{
+    background-color: #ececec;
+}
+
+.likesContComment{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+}

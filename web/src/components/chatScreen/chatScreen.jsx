@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import "./ChatScreen.css";
+import "./chatScreen.css";
 import {
   ArrowLeft,
   PlusLg,
@@ -244,6 +244,7 @@ const ChatScreen = () => {
             showConfirmButton: false,
           });
           setShowMenu(false);
+          getMessages();
         } catch (error) {
           console.log(error.data);
           Swal.fire({
