@@ -41,7 +41,8 @@ router.post(
         userName: req.body.userName,
         postId: new ObjectId(req.body.postId),
         comment: req.body.comment,
-        authorId: req.body.authorId,
+        authorId: new ObjectId(req.body.authorId),
+        likes: []
       });
       console.log(insertResponse);
       res.send("comment done");
@@ -269,5 +270,91 @@ router.post(
     );
   }
 );
+
+// comment likes
+
+router.post('/comment/:commentId/dolike', async (req, res, next) => {
+  if (!ObjectId.isValid(req.params.commentId)) {
+    res.status(403).send(`Invalid comment id`);
+    return;
+  }
+
+  try {
+    const doLikeResponse = await commentsCollection.updateOne(
+      { _id: new ObjectId(req.params.commentId) },
+      {
+        $addToSet: {
+          likes: {
+            userId: new ObjectId(req.body.userId),
+            firstName: req.body.decoded.firstName,
+            lastName: req.body.decoded.lastName,
+            profileImage: req.body.profileImage,
+          },
+        },
+      }
+    );
+    console.log("doLikeResponse: ", doLikeResponse);
+    res.send('Like added successfully');
+  } catch (e) {
+    console.log("error adding like to comment in MongoDB: ", e);
+    res.status(500).send('Server error, please try later');
+  }
+});
+
+router.delete('/comment/:commentId/undolike', async (req, res) => {
+  try {
+    const commentId = req.params.commentId;
+    const userId = req.body.userId;
+
+    // Check if the comment ID is valid
+    if (!ObjectId.isValid(commentId)) {
+      res.status(403).send('Invalid comment id');
+      return;
+    }
+
+    // Update the comment to remove the like by the specified user
+    const updateResult = await commentsCollection.updateOne(
+      { _id: new ObjectId(commentId) },
+      {
+        $pull: {
+          likes: { userId: new ObjectId(userId) },
+        },
+      }
+    );
+
+    if (updateResult.modifiedCount === 0) {
+      res.status(404).send('Comment not found');
+      return;
+    }
+
+    res.status(200).send('Like removed successfully');
+  } catch (error) {
+    console.error('Error removing like from comment:', error);
+    res.status(500).send('Server error, please try later');
+  }
+});
+
+router.get('/likes/comment/:commentId', async (req, res, next) => {
+  const commentId = req.params.commentId;
+
+  if (!ObjectId.isValid(commentId)) {
+      res.status(403).send(`Invalid comment id`);
+      return;
+  }
+
+  try {
+      let result = await commentsCollection.findOne({ _id: new ObjectId(commentId) });
+
+      if (result) {
+          console.log("result: ", result);
+          res.status(200).send(result.likes);
+      } else {
+          res.status(404).send('comment not found');
+      }
+  } catch (e) {
+      console.log("error getting data from MongoDB: ", e);
+      res.status(500).send('Server error, please try later');
+  }
+});
 
 export default router;
