@@ -5,6 +5,12 @@ import openai from "openai"
 import admin from "firebase-admin";
 import multer, { diskStorage } from 'multer';
 import fs from "fs";
+import {
+    stringToHash,
+    varifyHash,
+} from "bcrypt-inzi";
+import jwt from 'jsonwebtoken';
+import "dotenv/config"
 
 const db = client.db("weapp")
 const col = db.collection("posts")
@@ -68,7 +74,7 @@ router.post('/post', (req, res, next) => {
         }
 
         if (req.files && req.files[0] && req.files[0].size > 2000000) { // Check file size if a file is provided
-            res.status(403).send({ message: 'File size limit exceeded, max limit 2MB' });
+            res.status(403).send({ message: 'File size limit exceeded, maximum limit 2MB' });
             return;
         }
 
@@ -158,7 +164,7 @@ router.get('/feed', async (req, res, next) => {
 
     try {
         const projection = { _id: 1, title: 1, text: 1, time: 1, userId: 1, likes: 1, image: 1, userImage: 1 }
-        const cursor = col.find({}).sort({ _id: -1 }).project(projection).limit(5).skip(page);
+        const cursor = col.find({}).sort({ _id: -1 }).project(projection);
         let results = await cursor.toArray();
 
         console.log(results);
@@ -294,7 +300,8 @@ router.get('/profile/:userId', async (req, res, next) => {
                 lastName: result.lastName,
                 email: result.email,
                 userId: result._id,
-                profileImage: result.profileImage
+                profileImage: result.profileImage,
+                createdOn: result.createdOn,
             },
             id: userId
         });
@@ -384,6 +391,38 @@ router.get("/search", async (req, res) => {
         res.status(500).send('Error during search');
     }
 });
+
+router.get('/search-user', async (req, res) => {
+
+    const searchText = req.query.q;
+
+    if (!searchText) {
+        return res.status(400).json({ error: 'Search text is required.' });
+    }
+
+    try {
+        // Perform the full-text search using the $text operator
+        const projection = { _id: 1, firstName: 1, lastName: 1, email: 1, profileImage: 1 };
+        const result = await userCollection.find({
+            $or: [
+                {
+                    firstName: { $regex: new RegExp(searchText, 'i') },
+                },
+                {
+                    lastName: { $regex: new RegExp(searchText, 'i') },
+                },
+            ],
+        }).project(projection).toArray();
+        console.log(result);
+        res.status(200).send(result)
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+});
+
+// like dislike
 
 router.post('/post/:postId/dolike', async (req, res, next) => {
 
@@ -623,5 +662,219 @@ router.put('/update-name', async (req, res, next) => {
     }
 });
 
+// email change
+
+router.put('/update-email', async (req, res, next) => {
+    if (!req.body.email || !req.body.password || !req.body.userId) {
+        res.status(403);
+        res.send(`Required parameters missing, example request body:
+        {
+            "email": "abc@gmail.com",
+            "password": "12345678",
+            "userId": "12345678"
+        }`);
+        return;
+    }
+
+    let { email, password, userId } = req.body;
+
+    if (!ObjectId.isValid(userId)) {
+        res.status(403).send(`Invalid user id`);
+        return;
+    }
+
+    userId = new ObjectId(userId);
+
+    try {
+
+        // verify password
+        const findUserResponse = await userCollection.findOne({ _id: userId });
+
+        if (!findUserResponse) {
+            res.status(401).send({ message: 'User not found' });
+            return;
+        }
+
+        const userPasswordHash = findUserResponse.password
+        const isMatch = await varifyHash(password, userPasswordHash)
+
+        if (!isMatch) {
+            res.status(401).send({ message: 'Invalid Password' });
+            return;
+        }
+
+        const emailVerify = await userCollection.findOne({ email: email })
+        if (emailVerify) {
+            res.status(401).send({ message: 'Email already taken' });
+            return;
+        }
+
+        // Update user
+        const userUpdateResponse = await userCollection.updateOne(
+            { _id: userId },
+            { $set: { email: email } }
+        );
+
+        // Update all posts of user
+        const postsUpdateResponse = await col.updateMany(
+            { userId: userId },
+            { $set: { email: email } }
+        );
+
+        // generate a new token using JWT
+
+        const token = jwt.sign({
+            isAdmin: false,
+            firstName: findUserResponse.firstName,
+            lastName: findUserResponse.lastName,
+            email: email,
+            _id: findUserResponse._id
+        }, process.env.SECRET, {
+            expiresIn: '24h'
+        });
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,
+            expires: new Date(Date.now() + 86400000)
+        });
+
+        // Send a success response to the client
+        res.status(200).json({ success: true, message: 'Email updated successfully' });
+    } catch (error) {
+        console.error(error);
+        // Send an error response to the client
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+
+// delete account
+
+router.delete('/delete-account', async (req, res, next) => {
+
+    console.log(req.body);
+
+    if (!req.body.password || !req.body.userId) {
+        res.status(403);
+        res.send(`Required parameters missing, example request body:
+        {
+            "password": "12345678",
+            "userId": "12345678"
+        }`);
+        return;
+    }
+
+    let { password, userId } = req.body;
+
+    if (!ObjectId.isValid(userId)) {
+        res.status(403).send(`Invalid user id`);
+        return;
+    }
+
+    userId = new ObjectId(userId);
+
+    try {
+
+        // verify password
+        const findUserResponse = await userCollection.findOne({ _id: userId });
+
+        if (!findUserResponse) {
+            res.status(401).send({ message: 'User not found' });
+            return;
+        }
+
+        const userPasswordHash = findUserResponse.password
+        const isMatch = await varifyHash(password, userPasswordHash)
+
+        if (!isMatch) {
+            res.status(401).send({ message: 'Invalid Password' });
+            return;
+        }
+
+        // delete user
+        const userdeleteResponse = await userCollection.deleteOne({ _id: userId });
+
+        // delete all posts of user
+        const postsdeleteResponse = await col.deleteMany({ userId: userId });
+
+        // delete all comments
+        const commentsdeleteResponse = await commentsCollection.deleteMany({ userId: userId });
+
+        // remove all likes on posts
+        const postsLikesUpdateResponse = await col.updateMany(
+            { 'likes.userId': userId },
+            { $pull: { likes: { userId: userId } } }
+        );
+
+        // remove all likes on comments
+        const commentsLikesUpdateResponse = await commentsCollection.updateMany(
+            { 'likes.userId': userId },
+            { $pull: { likes: { userId: userId } } }
+        );
+
+        // Send a success response to the client
+        res.status(200).json({ success: true, message: 'Account deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        // Send an error response to the client
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+
+// delete account for admin
+
+router.delete('/delete-account-admin', async (req, res, next) => {
+
+    console.log(req.query.userId);
+
+    if (!req.query.userId) {
+        res.status(403);
+        res.send(`Required parameters missing, example request body:
+        {
+            "userId": "12345678"
+        }`);
+        return;
+    }
+
+    let { userId } = req.query;
+
+    if (!ObjectId.isValid(userId)) {
+        res.status(403).send(`Invalid user id`);
+        return;
+    }
+
+    userId = new ObjectId(userId);
+
+    try {
+
+        // delete user
+        const userdeleteResponse = await userCollection.deleteOne({ _id: userId });
+
+        // delete all posts of user
+        const postsdeleteResponse = await col.deleteMany({ userId: userId });
+
+        // delete all comments
+        const commentsdeleteResponse = await commentsCollection.deleteMany({ userId: userId });
+
+        // remove all likes on posts
+        const postsLikesUpdateResponse = await col.updateMany(
+            { 'likes.userId': userId },
+            { $pull: { likes: { userId: userId } } }
+        );
+
+        // remove all likes on comments
+        const commentsLikesUpdateResponse = await commentsCollection.updateMany(
+            { 'likes.userId': userId },
+            { $pull: { likes: { userId: userId } } }
+        );
+
+        // Send a success response to the client
+        res.status(200).json({ success: true, message: 'Account deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        // Send an error response to the client
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
 
 export default router

@@ -20,11 +20,17 @@ import { globalIoObject } from './core.mjs'
 const app = express();
 app.use(express.json()); // body parser
 app.use(cookieParser()); // cookie parser
-app.use(cors({
-    origin: ['http://localhost:3000'],
-    credentials: true
-}));                    //allow server for front end CORS policy
-
+// app.use(cors({
+//     origin: ['http://localhost:3000'],
+//     credentials: true
+// }));                    //allow server for front end CORS policy
+app.use(
+    cors({
+      origin: 'http://localhost:3000', // Allow requests from this origin
+      credentials: true, // Enable credentials (cookies, authorization headers, etc.)
+    })
+  ); // Allow server for front end CORS policy
+  
 
 app.use("/api/v1", authRouter)
 

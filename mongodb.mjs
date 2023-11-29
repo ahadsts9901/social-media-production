@@ -1,6 +1,7 @@
 import { MongoClient } from 'mongodb'
+import "dotenv/config"
 
-const uri = 'mongodb+srv://ahadsts9901:ahsan123@cluster0.2ib77co.mongodb.net/?retryWrites=true&w=majority';
+const uri = process.env.MONGO_URI;
 export const client = new MongoClient(uri);
 
 async function run() {
