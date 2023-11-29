@@ -17,30 +17,45 @@ const SecondaryChat = (props) => {
     <div className="mainMessage">
       <div className="otherMessageTail"></div>
       <div className="otherMessage">
-        <p>
-          {props.message}
-        </p>
-        <span className="otherDetails">
-          {
-            state.user.userId === props.from_id ?
-              showAction ? <ChevronUp onClick={() => { setShowAction(!showAction) }} style={{ marginTop: "0.3em" }
-              } /> :
-                <ChevronDown onClick={() => { setShowAction(!showAction) }} style={{ marginTop: "0.3em" }} />
-              : null
-          }
-          <p id="chatTime">{time}</p>
-        </span>
-        {
-          state.user.userId === props.from_id ?
-            (showAction ? <div className="secondaryChatActionCont">
-              < p > <TrashFill /> Delete</p>
-              <p><PencilFill /> Edit</p>
-            </div> : null)
-            : null
-        }
+        <p>{props.message}</p>
+        {props.time ? (
+          <span className="otherDetails">
+            {state.user.userId === props.from_id ? (
+              showAction ? (
+                <ChevronUp className="pointer"
+                  onClick={() => {
+                    setShowAction(!showAction);
+                  }}
+                  style={{ marginTop: "0.3em" }}
+                />
+              ) : (
+                <ChevronDown className="pointer"
+                  onClick={() => {
+                    setShowAction(!showAction);
+                  }}
+                  style={{ marginTop: "0.3em" }}
+                />
+              )
+            ) : null}
+            <p id="chatTime">{time}</p>
+          </span>
+        ) : null}
+        {state.user.userId === props.from_id ? (
+          showAction ? (
+            <div className="secondaryChatActionCont">
+              <p className="pointer">
+                <TrashFill /> Delete
+              </p>
+              <p className="pointer">
+                <PencilFill /> Edit
+              </p>
+            </div>
+          ) : null
+        ) : null}
       </div>
     </div>
   );
+  
 };
 
 export default SecondaryChat;

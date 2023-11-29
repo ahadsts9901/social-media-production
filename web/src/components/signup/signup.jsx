@@ -39,11 +39,11 @@ const Signup = () => {
     const password = passwordRef.current.value;
     const confirmPassword = confirmPasswordRef.current.value;
 
-    if (!email.endsWith("@gmail.com")) {
-      setValidationMessage("Invalid email address");
-      setSuccessMessage("")
-      return;
-    }
+    // if (!email.endsWith("@gmail.com")) {
+    //   setValidationMessage("Invalid email address");
+    //   setSuccessMessage("")
+    //   return;
+    // }
 
     if (
       firstName.trim() === '' ||

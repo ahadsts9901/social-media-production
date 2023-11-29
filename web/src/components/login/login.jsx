@@ -29,11 +29,11 @@ const Login = () => {
   const login = async (event) => {
     event.preventDefault();
 
-    if (!emailRef.current.value.endsWith("@gmail.com")) {
-      setValidationMessage("Invalid email address");
-      setSuccessMessage("")
-      return;
-    }
+    // if (!emailRef.current.value.endsWith("@gmail.com")) {
+    //   setValidationMessage("Invalid email address");
+    //   setSuccessMessage("")
+    //   return;
+    // }
 
     if (emailRef.current.value.trim() === '' || passwordRef.current.value.trim() === '') {
       setValidationMessage("Please fill required fields");

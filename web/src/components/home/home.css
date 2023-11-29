@@ -76,6 +76,12 @@ h6 {
     background-color: #28435200;
 }
 
+
+.result::-webkit-scrollbar {
+    width: 4px;
+    background-color: #28435200;
+}
+
 .result::-moz-scrollbar-thumb {
     width: 4px !important;
     background-color: #284352;
@@ -89,11 +95,6 @@ h6 {
 }
 
 .result::-webkit-scrollbar-track {
-    width: 4px;
-    background-color: #28435200;
-}
-
-.result::-webkit-scrollbar {
     width: 4px;
     background-color: #28435200;
 }
@@ -112,5 +113,15 @@ h6 {
 
     100% {
         transform: rotate(360deg);
+    }
+}
+
+@media(max-width:425px){
+    .result::-moz-scrollbar {
+       display: none;
+    }
+    
+    .result::-webkit-scrollbar {
+        display: none;
     }
 }

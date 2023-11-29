@@ -5,6 +5,7 @@ import { Search as SearchBS } from "react-bootstrap-icons";
 import axios from "axios";
 import { GlobalContext } from "../../context/context";
 import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 import { baseUrl } from "../../core.mjs";
 
@@ -140,6 +141,27 @@ const Post = (props) => {
     }
   };
 
+  const showFullImg = () => {
+    Swal.fire({
+      html: `
+        <img src="${props.image}" class="postImageSelect" />
+      `,
+      showCancelButton: false,
+      showConfirmButton: true,
+      cancelButtonText: "Cancel",
+      confirmButtonText: "Download",
+      cancelButtonColor: "#284352",
+      confirmButtonColor: "#284352",
+      preConfirm: async () => {
+        var element = document.createElement("a");
+        var file = new Blob([`"${props.image}"`], { type: "image/*" });
+        element.href = URL.createObjectURL(file);
+        element.download = `post-${new Date().toLocaleString()}`;
+        element.click();
+      },
+    });
+  };
+
   return (
     <div className="singlePost">
       <div
@@ -178,7 +200,14 @@ const Post = (props) => {
           )}
         </p>
         {props.image && (
-          <img width="425" height="300" src={props.image} alt="post image" className="postImg" />
+          <img
+            width="425"
+            height="300"
+            src={props.image}
+            alt="post image"
+            className="postImg"
+            onClick={showFullImg}
+          />
         )}
       </div>
       {/* <p className="seeWhoLiked" onClick={()=>{ seePost(props.postId) }} >

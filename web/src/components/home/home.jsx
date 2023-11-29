@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import axios from "axios";
-// import Swal from 'sweetalert2';
 import "./home.css";
 import { Post, NoPost } from "../post/post";
 import { useNavigate } from "react-router-dom";
@@ -28,41 +27,41 @@ const Home = () => {
 
   // pagination
 
-  const handleScroll = () => {
-    const container = document.querySelector(".result");
+  // const handleScroll = () => {
+  //   const container = document.querySelector(".result");
 
-    if (container) {
-      // Calculate the sum of the scroll position and the container's client height
-      const scrollSum = container.scrollTop + container.clientHeight;
+  //   if (container) {
+  //     // Calculate the sum of the scroll position and the container's client height
+  //     const scrollSum = container.scrollTop + container.clientHeight;
 
-      // Check if the sum is equal to or greater than the scroll
-      if (scrollSum == container.scrollHeight) {
-        loadMore();
-      }
-    }
-  };
+  //     // Check if the sum is equal to or greater than the scroll
+  //     if (scrollSum == container.scrollHeight) {
+  //       loadMore();
+  //     }
+  //   }
+  // };
 
   // pagination
 
-  const loadMore = () => {
-    axios
-      .get(`${baseUrl}/api/v1/feed?page=${posts.length}`)
-      .then(function (response) {
-        let fetchedPosts = response.data;
-        setPosts((prev) => {
-          return [...prev, ...response.data];
-        });
-      })
-      .catch(function (error) {
-        // console.log(error);
-        let resStatus = error.response.request.status;
-        // console.log(resStatus)
-        if (resStatus === 401) {
-          // console.log("not authorized")
-          navigate("/login");
-        }
-      });
-  };
+  // const loadMore = () => {
+  //   axios
+  //     .get(`${baseUrl}/api/v1/feed?page=${posts.length}`)
+  //     .then(function (response) {
+  //       let fetchedPosts = response.data;
+  //       setPosts((prev) => {
+  //         return [...prev, ...response.data];
+  //       });
+  //     })
+  //     .catch(function (error) {
+  //       // console.log(error);
+  //       let resStatus = error.response.request.status;
+  //       // console.log(resStatus)
+  //       if (resStatus === 401) {
+  //         // console.log("not authorized")
+  //         navigate("/login");
+  //       }
+  //     });
+  // };
 
   const renderPost = () => {
     axios
@@ -87,7 +86,7 @@ const Home = () => {
     Swal.fire({
       title: "Delete Post",
       text: "Are you sure you want to delete this post?",
-      icon: "warning",
+      // icon: "warning",
       showCancelButton: true,
       cancelButtonText: "Cancel",
       confirmButtonText: "Delete",
@@ -102,21 +101,32 @@ const Home = () => {
             `${baseUrl}/api/v1/post/${postId}`
           );
           // console.log(response.data);
-          Swal.fire({
-            icon: "success",
-            title: "Post Deleted",
-            timer: 1000,
-            showCancelButton: false,
+          const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
             showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({
+            // icon: "success",
+            title: "Post deleted"
           });
           renderPost();
         } catch (error) {
           console.log(error.data);
           Swal.fire({
-            icon: "error",
+            // icon:"error",
             title: "Failed to delete post",
-            text: error.data,
+            timer: 2000,
             showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonColorL:"#284352",
+            cancelButtonText:"Ok"
           });
         }
       },
@@ -156,21 +166,33 @@ const Home = () => {
               })
               .then((response) => {
                 // console.log(response.data);
-                Swal.fire({
-                  icon: "success",
-                  title: "Post Updated",
-                  timer: 1000,
+                const Toast = Swal.mixin({
+                  toast: true,
+                  position: "top-end",
                   showConfirmButton: false,
+                  timer: 3000,
+                  timerProgressBar: true,
+                  didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                  }
+                });
+                Toast.fire({
+                  // icon: "success",
+                  title: "Post updated"
                 });
                 renderPost();
               })
               .catch((error) => {
                 // console.log(error.response.data);
                 Swal.fire({
-                  icon: "error",
+                  // icon:"error",
                   title: "Failed to update post",
-                  text: error.response.data,
+                  timer: 2000,
                   showConfirmButton: false,
+                  showCancelButton: true,
+                  cancelButtonColorL:"#284352",
+                  cancelButtonText:"Ok"
                 });
               });
           },
@@ -179,17 +201,22 @@ const Home = () => {
       .catch((error) => {
         // console.log(error.response.data);
         Swal.fire({
-          icon: "error",
+          // icon:"error",
           title: "Failed to fetch post",
-          text: error.response.data,
+          timer: 2000,
           showConfirmButton: false,
+          showCancelButton: true,
+          cancelButtonColorL:"#284352",
+          cancelButtonText:"Ok"
         });
       });
   }
 
   return (
     <>
-      <div className="result" onScroll={handleScroll}>
+      <div className="result"
+      //  onScroll={handleScroll}
+       >
         {!posts ? (
           <span className="loader"></span>
         ) : posts.length === 0 ? (

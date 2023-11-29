@@ -123,6 +123,25 @@ header{
     /* height: 17em; */
 }
 
+.chatButtonCont{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    flex-wrap: wrap;
+}
+
+.swalButtonChat{
+    background-color: #00000000;
+    color: #284352;
+    border: 0;
+    padding: 0;
+}
+
+#chatFileLabel{
+    cursor: pointer;
+}
+
 @media (max-width:425px){
     .chat{
         width: 100%;

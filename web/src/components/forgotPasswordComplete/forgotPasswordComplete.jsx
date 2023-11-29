@@ -15,7 +15,7 @@ const ForgotPasswordComplete = () => {
 
   useEffect(()=>{
     Swal.fire({
-      icon: "info",
+      // icon: "info",
       text: "Your OTP code dont share it",
       title: otp,
       showConfirmButton: true,
@@ -41,11 +41,11 @@ const ForgotPasswordComplete = () => {
   const completeForgotPassword = async (event) => {
     event.preventDefault();
 
-    if (!emailRef.current.value.endsWith("@gmail.com")) {
-      setValidationMessage("Invalid email address");
-      setSuccessMessage("");
-      return;
-    }
+    // if (!emailRef.current.value.endsWith("@gmail.com")) {
+    //   setValidationMessage("Invalid email address");
+    //   setSuccessMessage("");
+    //   return;
+    // }
 
     if (
       emailRef.current.value.trim() === "" ||

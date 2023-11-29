@@ -24,10 +24,10 @@ const ForgotPassword = () => {
   const forgotPassword = async (event) => {
     event.preventDefault();
 
-    if (!email.endsWith("@gmail.com")) {
-      setValidationMessage("Invalid email address");
-      return;
-    }
+    // if (!email.endsWith("@gmail.com")) {
+    //   setValidationMessage("Invalid email address");
+    //   return;
+    // }
 
     if (email.trim() === "") {
       setValidationMessage("Please enter email");

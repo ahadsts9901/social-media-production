@@ -51,7 +51,7 @@ const SinglePost = () => {
     Swal.fire({
       title: 'Delete Post',
       text: 'Are you sure you want to delete this post ?',
-      icon: 'warning',
+      // icon: 'warning',
       showCancelButton: true,
       cancelButtonText: 'Cancel',
       confirmButtonText: 'Delete',
@@ -64,21 +64,32 @@ const SinglePost = () => {
         try {
           const response = await axios.delete(`${baseUrl}/api/v1/post/${postId}`);
           // console.log(response.data);
-          Swal.fire({
-            icon: 'success',
-            title: 'Post Deleted',
-            timer: 1000,
-            showCancelButton: false,
-            showConfirmButton: false
+          const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({
+            // icon: "success",
+            title: "Post deleted"
           });
           navigate("/")
         } catch (error) {
           console.log(error.data);
           Swal.fire({
-            icon: 'error',
-            title: 'Failed to delete post',
-            text: error.data,
-            showConfirmButton: false
+            // icon:"error",
+            title: "Failed to delete post",
+            timer: 2000,
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonColorL:"#284352",
+            cancelButtonText:"Ok"
           });
         }
       }
@@ -117,21 +128,33 @@ const SinglePost = () => {
             })
               .then(response => {
                 // console.log(response.data);
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Post Updated',
-                  timer: 1000,
-                  showConfirmButton: false
+                const Toast = Swal.mixin({
+                  toast: true,
+                  position: "top-end",
+                  showConfirmButton: false,
+                  timer: 3000,
+                  timerProgressBar: true,
+                  didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                  }
+                });
+                Toast.fire({
+                  // icon: "success",
+                  title: "Post updated"
                 });
                 seePost(postId)
               })
               .catch(error => {
                 // console.log(error.response.data);
                 Swal.fire({
-                  icon: 'error',
-                  title: 'Failed to update post',
-                  text: error.response.data,
-                  showConfirmButton: false
+                  // icon:"error",
+                  title: "Failed to update post",
+                  timer: 2000,
+                  showConfirmButton: false,
+                  showCancelButton: true,
+                  cancelButtonColorL:"#284352",
+                  cancelButtonText:"Ok"
                 });
               });
           }
@@ -140,9 +163,7 @@ const SinglePost = () => {
       .catch(error => {
         // console.log(error.response.data);
         Swal.fire({
-          icon: 'error',
           title: 'Failed to fetch post',
-          text: error.response.data,
           showConfirmButton: false
         });
       });
@@ -175,16 +196,34 @@ const SinglePost = () => {
       })
       .then(function (response) {
         // console.log(response.data);
-        Swal.fire({
-          icon: "success",
-          title: "Comment Added",
-          timer: 1000,
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
           showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });
+        Toast.fire({
+          // icon: "success",
+          title: "Comment added"
         });
         getComments(postId.postId)
       })
       .catch(function (error) {
         console.log(error)
+        Swal.fire({
+          // icon:"error",
+          title: "Can't comment",
+          timer: 2000,
+          showConfirmButton: false,
+          showCancelButton: true,
+          cancelButtonColorL:"#284352",
+          cancelButtonText:"Ok"
+        });
       });
 
     event.target.reset()
@@ -205,7 +244,7 @@ const SinglePost = () => {
     Swal.fire({
       title: 'Delete Comment',
       text: 'Are you sure you want to delete this Comment ?',
-      icon: 'warning',
+      // icon: 'warning',
       showCancelButton: true,
       cancelButtonText: 'Cancel',
       confirmButtonText: 'Delete',
@@ -218,21 +257,32 @@ const SinglePost = () => {
         try {
           const response = await axios.delete(`${baseUrl}/api/v1/comment/${commentId}`);
           // console.log(response.data);
-          Swal.fire({
-            icon: 'success',
-            title: 'Comment Deleted',
-            timer: 1000,
-            showCancelButton: false,
-            showConfirmButton: false
+          const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({
+            // icon: "success",
+            title: "Comment deleted"
           });
           getComments(postId.postId)
         } catch (error) {
           console.log(error.data);
           Swal.fire({
-            icon: 'error',
-            title: 'Failed to delete comment',
-            text: error.data,
-            showConfirmButton: false
+            // icon:"error",
+            title: "Failed to delete comment",
+            timer: 2000,
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonColorL:"#284352",
+            cancelButtonText:"Ok"
           });
         }
       }
@@ -270,21 +320,33 @@ const SinglePost = () => {
         })
           .then(response => {
             // console.log(response.data);
-            Swal.fire({
-              icon: 'success',
-              title: 'Comment Updated',
-              timer: 1000,
-              showConfirmButton: false
+            const Toast = Swal.mixin({
+              toast: true,
+              position: "top-end",
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+              }
+            });
+            Toast.fire({
+              // icon: "success",
+              title: "Comment updated"
             });
             getComments(postId.postId)
           })
           .catch(error => {
             // console.log(error.response.data);
             Swal.fire({
-              icon: 'error',
-              title: 'Failed to update comment',
-              text: error.response.data,
-              showConfirmButton: false
+              // icon:"error",
+              title: "Failed to update comment",
+              timer: 2000,
+              showConfirmButton: false,
+              showCancelButton: true,
+              cancelButtonColorL:"#284352",
+              cancelButtonText:"Ok"
             });
           });
       }
@@ -295,7 +357,7 @@ const SinglePost = () => {
   return (
     <div className="singlePostCont">
       <div className="backArrow">
-        <h2 className="bi bi-arrow-left" onClick={() => { window.history.back() }}></h2>
+        <h2 className="bi bi-arrow-left pointer" onClick={() => { window.history.back() }}></h2>
       </div>
       {post ? ( // Check if post is defined
         <>

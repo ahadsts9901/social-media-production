@@ -99,14 +99,14 @@ const SingleComment = (props) => {
         <div className="actionContComment">
           {showAction ? (
             <>
-              <ChevronUp
+              <ChevronUp className="pointer"
                 onClick={() => {
                   setShowAction(!showAction);
                 }}
               />
-              <div className="commentMenu">
+              <div className="commentMenu pointer">
                 {state.user.userId === props.userId && (
-                  <p
+                  <p className="pointer"
                     onClick={(event) => {
                       props.edit(props._id, event);
                     }}
@@ -114,7 +114,7 @@ const SingleComment = (props) => {
                     Edit
                   </p>
                 )}
-                <p
+                <p className="pointer"
                   onClick={() => {
                     props.del(props._id);
                   }}
@@ -124,7 +124,7 @@ const SingleComment = (props) => {
               </div>
             </>
           ) : (
-            <ChevronDown
+            <ChevronDown className="pointer"
               onClick={() => {
                 setShowAction(!showAction);
               }}
@@ -133,7 +133,7 @@ const SingleComment = (props) => {
         </div>
       ) : null}
       <div
-        className="singleCommentHead"
+        className="singleCommentHead pointer"
         onClick={() => {
           navigate(`/profile/${props.userId}`);
         }}

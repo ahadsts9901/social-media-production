@@ -43,7 +43,7 @@ const CommentLikes = (props) => {
   return(
     <div className="likeUserContainer">
       <div className="backArrow">
-      <h2 className="bi bi-arrow-left" onClick={()=>{ window.history.back() }}></h2>
+      <h2 className="bi bi-arrow-left pointer" onClick={()=>{ window.history.back() }}></h2>
       </div>
       <h2>{!likeUsers ? "No Likes" : (likeUsers.length != 1 ? ( likeUsers.length + " Likes") : (likeUsers.length + " Like") )} </h2>
       <div className="likesList">

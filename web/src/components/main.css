@@ -65,15 +65,45 @@ a {
 }
 
 #root::-moz-scrollbar {
-  display: none !important;
+  width: 4px;
+  background-color: #28435200;
+}
+
+#root::-moz-scrollbar-thumb {
+  width: 4px !important;
+  background-color: #284352;
+  border: none;
+  border-radius: 5px !important;
+}
+
+#root::-moz-scrollbar-track {
+  width: 4px;
+  background-color: #28435200;
+}
+
+#root::-webkit-scrollbar-track {
+  width: 4px;
+  background-color: #28435200;
 }
 
 #root::-webkit-scrollbar {
-  display: none !important;
+  width: 4px;
+  background-color: #28435200;
+}
+
+#root::-webkit-scrollbar-thumb {
+  width: 4px !important;
+  background-color: #284352;
+  border: none;
+  border-radius: 5px !important;
 }
 
 img{
   object-fit: cover;
+}
+
+a{
+  cursor: pointer;
 }
 
 @media (max-width: 480px) {

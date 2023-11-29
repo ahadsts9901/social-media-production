@@ -41,7 +41,7 @@ const Admin = () => {
     Swal.fire({
       title: 'Delete Post',
       text: 'Are you sure you want to delete this post?',
-      icon: 'warning',
+      // icon: 'warning',
       showCancelButton: true,
       cancelButtonText: 'Cancel',
       confirmButtonText: 'Delete',
@@ -54,21 +54,32 @@ const Admin = () => {
         try {
           const response = await axios.delete(`${baseUrl}/api/v1/post/${postId}`);
           // console.log(response.data);
-          Swal.fire({
-            icon: 'success',
-            title: 'Post Deleted',
-            timer: 1000,
-            showCancelButton: false,
-            showConfirmButton: false
+          const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({
+            // icon: "success",
+            title: "Post deleted"
           });
           renderAdminPost();
         } catch (error) {
           console.log(error.data);
           Swal.fire({
-            icon: 'error',
-            title: 'Failed to delete post',
-            text: error.data,
-            showConfirmButton: false
+            // icon:"error",
+            title: "Error in deleting post",
+            timer: 2000,
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonColorL:"#284352",
+            cancelButtonText:"Ok"
           });
         }
       }
@@ -107,21 +118,33 @@ const Admin = () => {
             })
               .then(response => {
                 // console.log(response.data);
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Post Updated',
-                  timer: 1000,
-                  showConfirmButton: false
+                const Toast = Swal.mixin({
+                  toast: true,
+                  position: "top-end",
+                  showConfirmButton: false,
+                  timer: 3000,
+                  timerProgressBar: true,
+                  didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                  }
+                });
+                Toast.fire({
+                  // icon: "success",
+                  title: "Post updated"
                 });
                 renderAdminPost();
               })
               .catch(error => {
                 // console.log(error.response.data);
                 Swal.fire({
-                  icon: 'error',
-                  title: 'Failed to update post',
-                  text: error.response.data,
-                  showConfirmButton: false
+                  // icon:"error",
+                  title: "Failed to update post",
+                  timer: 2000,
+                  showConfirmButton: false,
+                  showCancelButton: true,
+                  cancelButtonColorL:"#284352",
+                  cancelButtonText:"Ok"
                 });
               });
           }
@@ -130,10 +153,13 @@ const Admin = () => {
       .catch(error => {
         // console.log(error.response.data);
         Swal.fire({
-          icon: 'error',
-          title: 'Failed to fetch post',
-          text: error.response.data,
-          showConfirmButton: false
+          // icon:"error",
+          title: "Failed to fetch post",
+          timer: 2000,
+          showConfirmButton: false,
+          showCancelButton: true,
+          cancelButtonColorL:"#284352",
+          cancelButtonText:"Ok"
         });
       });
   }

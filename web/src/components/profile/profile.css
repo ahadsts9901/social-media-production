@@ -603,6 +603,7 @@ div:where(.swal2-container) div:where(.swal2-loader) {
     object-fit: cover;
     border-radius: 100%;
     border: 0px !important;
+    cursor: pointer;
 }
 
 .profile {
@@ -621,20 +622,13 @@ div:where(.swal2-container) div:where(.swal2-loader) {
     font-size: 0.8em;
 }
 
-.editIMG {
-    color: #284352;
-    position: relative;
-    top: -9em;
-    left: 3em!important;
-    z-index: 10 !important;
-}
-
 .hidden {
     display: none;
 }
 
 .pencil{
     margin-left: 1em;
+    cursor: pointer;
 }
 
 /* loader */
@@ -684,4 +678,57 @@ div:where(.swal2-container) div:where(.swal2-loader) {
     display: flex;
     align-items: center;
     gap: 1em;
+}
+
+.profileEmail{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    flex-wrap: wrap;
+    padding-bottom: 1em;
+}
+
+.editIMG {
+    color: #284352;
+    position: relative;
+    top: -16em!important;
+    left: 3em!important;
+    z-index: 10 !important;
+}
+
+textarea{
+    resize: none!important;
+    border-radius: 0px!important;
+}
+
+#swal-input1, #swal-input2, #swal-input1-Email, #swal-input2-Password, #swal-input2-Password-delete{
+    border-radius: 0px!important;
+}
+
+.delAcc{
+    width: 100%;
+    text-align: center;
+    padding: 1em 0 0 0;
+    cursor: pointer;
+}
+
+button{
+    cursor: pointer;
+}
+
+.backBtn{
+    width: 425px;
+    margin: 0 auto;
+    padding: 1em;
+}
+
+@media(max-width:442px){
+    .editIMG {
+        top: -19em!important;
+    }
+    
+    .backBtn{
+        width: 100%;
+    }
 }

@@ -130,6 +130,7 @@ row,
     margin: 0em !important;
     border-radius: 5px !important;
     margin-top: 1em !important;
+    cursor: pointer;
 }
 
 .postButton:active {
@@ -620,6 +621,10 @@ div:where(.swal2-container) div:where(.swal2-loader) {
     width: 100%;
     display: flex;
     gap: 1em;
+}
+
+.createImg{
+    cursor: pointer;
 }
 
 @media (max-width : 480px){

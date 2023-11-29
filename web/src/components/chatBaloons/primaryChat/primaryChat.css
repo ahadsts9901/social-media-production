@@ -8,7 +8,7 @@
 }
 
 .userMessage {
-  max-width: 170px;
+  max-width: 200px;
   min-width: 120px;
   min-height: 4em;
   border-radius: 15px;
@@ -84,5 +84,9 @@
   align-items: start;
   gap: 0.3em;
   width: 100%;
+  cursor: pointer;
+}
+
+.pointer{
   cursor: pointer;
 }

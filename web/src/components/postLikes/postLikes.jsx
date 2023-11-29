@@ -42,7 +42,7 @@ const PostLikes = (props) => {
 
   return(
     <div className="likeUserContainer">
-      <div className="backArrow">
+      <div className="backArrow pointer">
       <h2 className="bi bi-arrow-left" onClick={()=>{ window.history.back() }}></h2>
       </div>
       <h2>{!likeUsers ? "No Likes" : (likeUsers.length != 1 ? ( likeUsers.length + " Likes") : (likeUsers.length + " Like") )} </h2>

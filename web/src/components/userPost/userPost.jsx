@@ -4,7 +4,7 @@ import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { GlobalContext } from "../../context/context";
 import { useNavigate } from "react-router-dom";
-
+import Swal from "sweetalert2";
 import { baseUrl } from "../../core.mjs";
 
 const UserPost = (props) => {
@@ -135,6 +135,27 @@ const UserPost = (props) => {
     }
   };
 
+  const showFullImg = () => {
+    Swal.fire({
+      html: `
+        <img src="${props.image}" class="postImageSelect" />
+      `,
+      showCancelButton: false,
+      showConfirmButton: true,
+      cancelButtonText: "Cancel",
+      confirmButtonText: "Download",
+      cancelButtonColor: "#284352",
+      confirmButtonColor: "#284352",
+      preConfirm: async () => {
+        var element = document.createElement("a");
+        var file = new Blob([`"${props.image}"`], { type: "image/*" });
+        element.href = URL.createObjectURL(file);
+        element.download = `post-${new Date().toLocaleString()}`;
+        element.click();
+      },
+    });
+  };
+
   return (
     <div className="singlePost">
       <div
@@ -173,7 +194,14 @@ const UserPost = (props) => {
           )}
         </p>
         {props.image && (
-          <img src={props.image} width="425" height="300" alt="post image" className="postImg" />
+          <img
+            src={props.image}
+            width="425"
+            height="300"
+            alt="post image"
+            className="postImg"
+            onClick={showFullImg}
+          />
         )}
       </div>
       <div className="buttonContainer">

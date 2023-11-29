@@ -54,6 +54,7 @@ h6 {
     width: 100%;
     height: fit-content;
     padding: 0em 1.2em;
+    cursor: pointer;
 }
 
 .postHead>img {
@@ -97,6 +98,7 @@ h6 {
     width: 100%;
     text-align: left;
     color: #252525;
+    cursor: pointer;
 }
 
 .buttonContainer {
@@ -124,6 +126,7 @@ h6 {
     flex-grow: 1;
     background-color: #fff;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 .buttonContainer>button:hover {
@@ -179,4 +182,8 @@ h6 {
     height: 15em!important;
     padding: 1em;
     border-radius: 0px!important;
+}
+
+.postImg{
+    cursor: pointer;
 }

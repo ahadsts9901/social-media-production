@@ -143,3 +143,8 @@
   padding: 0.5em;
   flex-grow: 1;
 }
+
+textarea{
+  resize: none!important;
+  border-radius: 0px!important;
+}

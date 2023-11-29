@@ -7,7 +7,7 @@ import './navbar.css';
 import axios from 'axios';
 
 import { baseUrl } from '../../core.mjs';
- 
+
 const Navbar = () => {
     const { state, dispatch } = useContext(GlobalContext);
 
@@ -80,9 +80,9 @@ const Navbar = () => {
                 </Link>
                 <Link to={`/profile/${state.user.userId}`}>
                     {location.pathname.startsWith('/profile') ? (
-                        <PersonFill className="navIcons active" />
+                        <img src={state.user.profileImage} className="navImg imgNavAct" />
                     ) : (
-                        <Person className="navIcons" />
+                        <img src={state.user.profileImage} className="navImg" />
                     )}
                 </Link>
             </div>
