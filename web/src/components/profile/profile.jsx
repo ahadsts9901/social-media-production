@@ -76,7 +76,7 @@ const Profile = () => {
               toast: true,
               position: "top-end",
               showConfirmButton: false,
-              timer: 3000,
+              timer: 1200,
               timerProgressBar: true,
               didOpen: (toast) => {
                 toast.onmouseenter = Swal.stopTimer;
@@ -166,7 +166,7 @@ const Profile = () => {
             toast: true,
             position: "top-end",
             showConfirmButton: false,
-            timer: 3000,
+            timer: 1200,
             timerProgressBar: true,
             didOpen: (toast) => {
               toast.onmouseenter = Swal.stopTimer;
@@ -276,7 +276,7 @@ const Profile = () => {
             toast: true,
             position: "top-end",
             showConfirmButton: false,
-            timer: 3000,
+            timer: 1200,
             timerProgressBar: true,
             didOpen: (toast) => {
               toast.onmouseenter = Swal.stopTimer;
@@ -355,7 +355,7 @@ const Profile = () => {
             toast: true,
             position: "top-end",
             showConfirmButton: false,
-            timer: 3000,
+            timer: 1200,
             timerProgressBar: true,
             didOpen: (toast) => {
               toast.onmouseenter = Swal.stopTimer;
@@ -420,7 +420,7 @@ const Profile = () => {
                   toast: true,
                   position: "top-end",
                   showConfirmButton: false,
-                  timer: 3000,
+                  timer: 1200,
                   timerProgressBar: true,
                   didOpen: (toast) => {
                     toast.onmouseenter = Swal.stopTimer;
@@ -567,7 +567,7 @@ const Profile = () => {
             toast: true,
             position: "top-end",
             showConfirmButton: false,
-            timer: 3000,
+            timer: 1200,
             timerProgressBar: true,
             didOpen: (toast) => {
               toast.onmouseenter = Swal.stopTimer;
@@ -629,7 +629,7 @@ const Profile = () => {
             toast: true,
             position: "top-end",
             showConfirmButton: false,
-            timer: 3000,
+            timer: 1200,
             timerProgressBar: true,
             didOpen: (toast) => {
               toast.onmouseenter = Swal.stopTimer;

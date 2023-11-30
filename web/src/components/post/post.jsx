@@ -16,6 +16,8 @@ const Post = (props) => {
 
   const navigate = useNavigate();
 
+  // console.log(props);
+
   const postId = props.postId;
 
   useEffect(() => {
@@ -81,10 +83,19 @@ const Post = (props) => {
 
       if (response.data === "Like added successfully") {
         setIsLike(true);
-        // Update the like button
-      } else {
-        // console.log("Failed to add like.");
       }
+
+      const sentNotification = await axios.post(
+        `${baseUrl}/api/v1/notification`,
+        {
+          fromId: state.user.userId,
+          toId: props.userId,
+          actionId: props.postId,
+          message: `${state.user.firstName} ${state.user.lastName} liked your post`,
+        }
+      );
+
+      console.log("notification sent");
 
       let thumb = event.target.firstElementChild;
       thumb.classList.remove("bi-hand-thumbs-up");
@@ -108,10 +119,20 @@ const Post = (props) => {
 
       if (response.data === "Like removed successfully") {
         setIsLike(false); // Update the like button
-      } else {
-        // Handle the case where the undo like API fails
-        // console.log("Failed to remove like.");
       }
+
+      const delNotification = await axios.delete(
+        `${baseUrl}/api/v1/delete/notification`,
+        {
+          data: {
+            fromId: state.user.userId,
+            toId: props.userId,
+            actionId: props.postId,
+          },
+        }
+      );      
+
+      console.log("notification deleted");
 
       let thumb = event.target.firstElementChild;
       thumb.classList.add("bi-hand-thumbs-up");
@@ -159,6 +180,27 @@ const Post = (props) => {
         element.download = `post-${new Date().toLocaleString()}`;
         element.click();
       },
+    });
+  };
+
+  const shareFun = () => {
+    let url = window.location.origin + "/post/" + props.postId;
+    navigator.clipboard.writeText(url).then(() => {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1200,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        },
+      });
+      Toast.fire({
+        // icon: "success",
+        title: "Link copied to clipboard",
+      });
     });
   };
 
@@ -245,7 +287,7 @@ const Post = (props) => {
             <p>Comments ( {totalComments} )</p>
           )}
         </button>
-        <button>
+        <button onClick={shareFun}>
           <i className="bi bi-share-fill"></i>Share
         </button>
       </div>

@@ -85,7 +85,7 @@ const ForgotPasswordComplete = () => {
           //   password: passwordRef.current.value
           //  }}
         );
-      }, 3000);
+      }, 1200);
     } catch (error) {
       console.log(error);
       setSuccessMessage("");
