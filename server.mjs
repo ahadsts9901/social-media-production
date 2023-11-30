@@ -9,6 +9,7 @@ import authRouter from './routes/auth.mjs'
 import postRouter from './routes/post.mjs'
 import chatRouter from './routes/chat.mjs'
 import commentsRouter from './routes/comments.mjs'
+import notificationRouter from './routes/notifications.mjs'
 import cookieParser from 'cookie-parser'
 import { createServer } from "http";
 import { Server as socketIo } from 'socket.io';
@@ -59,6 +60,7 @@ app.use("/api/v1", (req, res, next) => {
 app.use("/api/v1", postRouter)
 app.use("/api/v1", chatRouter)
 app.use("/api/v1", commentsRouter)
+app.use("/api/v1", notificationRouter)
 
 app.use(express.static(path.join(__dirname, 'web/build')))
 // app.get(express.static(path.join(__dirname, 'web/build')))
