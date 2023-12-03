@@ -175,32 +175,38 @@ router.post('/forgot-password', async (req, res, next) => {
             return;
         }
 
-        console.log(user);
-
         const otpCode = otpGenerator.generate(6, {
             upperCaseAlphabets: false,
             lowerCaseAlphabets: false,
             specialChars: false
         });
 
+        console.log(otpCode);
+
         // nodemailer email send
 
-        // const transporter = nodemailer.createTransport({
-        //     service: 'gmail', // e.g., 'gmail'
-        //     auth: {
-        //         user: process.env.EMAIL,
-        //         pass: process.env.EMAIL_PASSWORD
-        //     }
-        // });
+        try {
 
-        // const mailOptions = {
-        //     from: process.env.EMAIL,
-        //     to: user.email,
-        //     subject: 'Forget Password OTP',
-        //     text: `Hi ${user.firstName}! Here is your forget password OTP code. This is valid for 15 minutes: ${otpCode}`
-        // };
+            const transporter = nodemailer.createTransport({
+                service: 'gmail', // e.g., 'gmail'
+                host: 'smtp.gmail.com',
+                auth: {
+                    user: process.env.EMAIL,
+                    pass: process.env.EMAIL_PASSWORD
+                }
+            });
 
-        // await transporter.sendMail(mailOptions);
+            const mailOptions = {
+                from: `<${process.env.EMAIL}>`,
+                to: user.email,
+                subject: 'Forget Password OTP',
+                text: `Hi ${user.firstName}! Here is your forget password OTP code. This is valid for 15 minutes: ${otpCode}`
+            };
+
+            await transporter.sendMail(mailOptions);
+        } catch (error) {
+            console.log("node-mailer : ", error);
+        }
 
         // email send completed
 
@@ -213,9 +219,7 @@ router.post('/forgot-password', async (req, res, next) => {
         });
         console.log("insertResponse: ", insertResponse);
 
-        res.send({ message: 'Forget password otp sent',
-                    otp: otpCode,
-        });
+        res.send({ message: 'Forget password otp sent' });
 
     } catch (e) {
         console.log("error getting data mongodb: ", e);
