@@ -2,6 +2,7 @@ import express from "express";
 import { client } from "../mongodb.mjs";
 import { ObjectId } from "mongodb";
 import "dotenv/config";
+import jwt from "jsonwebtoken";
 
 const db = client.db("weapp");
 const notifyCol = db.collection("notifications");
@@ -11,10 +12,17 @@ let router = express.Router();
 router.post(`/notification`, async (req, res, next) => {
   const { fromId, toId, actionId, message } = req.body;
 
+  if (fromId === toId) {
+    res.send(`cant notify yourself`)
+    return;
+  }
+
   if (!ObjectId.isValid(fromId)) {
     res.status(403).send(`Invalid id 1`);
     return;
   }
+
+  console.log(fromId, toId, actionId, message);
 
   if (!ObjectId.isValid(toId)) {
     res.status(403).send(`Invalid id 2`);
@@ -34,10 +42,13 @@ router.post(`/notification`, async (req, res, next) => {
   try {
     const notifyResp = await notifyCol.insertOne({
       sender: new ObjectId(fromId),
+      senderImage: req.body.senderImage,
+      senderName: req.body.senderName,
       receiver: new ObjectId(toId),
       action_id: new ObjectId(actionId),
       content: message,
       time: new Date(),
+      location: req.body.location
     });
 
     console.log("Done");
@@ -51,7 +62,8 @@ router.post(`/notification`, async (req, res, next) => {
 });
 
 router.get(`/notifications`, async (req, res, next) => {
-  const { userId } = req.body;
+
+  const userId = req.query.q;
 
   if (!ObjectId.isValid(userId)) {
     res.status(403).send(`Invalid id`);
@@ -61,21 +73,21 @@ router.get(`/notifications`, async (req, res, next) => {
   try {
     const getNotifyResp = notifyCol
       .find({
-        reciever: new ObjectId(userId),
+        receiver: new ObjectId(userId),
       })
       .sort({ _id: -1 });
 
-    const notifications = getNotifyResp.toArray();
+    const notifications = await getNotifyResp.toArray();
 
     console.log(notifications);
 
-    res.status(200).send(notifications);
+    res.send(notifications);
   } catch (error) {
     console.error(error);
   }
 });
 
-router.delete(`/notifications/:notifyId`, async (req, res, next) => {
+router.delete(`/notification/:notifyId`, async (req, res, next) => {
   const { notifyId } = req.params;
 
   if (!ObjectId.isValid(notifyId)) {

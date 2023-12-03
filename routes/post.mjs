@@ -17,6 +17,7 @@ const col = db.collection("posts")
 const userCollection = db.collection("auth")
 const commentsCollection = db.collection("comments")
 const chatCol = db.collection("chats")
+const notifyCol = db.collection("notifications");
 
 //==============================================
 const storageConfig = diskStorage({ // https://www.npmjs.com/package/multer#diskstorage
@@ -574,6 +575,12 @@ router.post('/profilePicture', (req, res, next) => {
                                     { 'likes.userId': new ObjectId(req.body.userId) },
                                     { $set: { 'likes.$.profileImage': urlData[0] } }
                                 );
+                                // Update user image URL in notifications collection
+
+                                const notificationsImageUpdateResponse = await notifyCol.updateMany(
+                                    { sender: new ObjectId(req.body.userId) },
+                                    { $set: { senderImage: urlData[0] } }
+                                );
 
                                 res.send('profile uploaded');
                             } catch (e) {
@@ -651,6 +658,13 @@ router.put('/update-name', async (req, res, next) => {
         const commentsLikesUpdateResponse = await commentsCollection.updateMany(
             { 'likes.userId': userId },
             { $set: { 'likes.$.firstName': firstName, 'likes.$.lastName': lastName } }
+        );
+
+        // Update user name in notifications
+
+        const notificationsNameUpdateResponse = await notifyCol.updateMany(
+            { sender: userId },
+            { $set: { senderName: `${firstName} ${lastName}` } }
         );
 
         // Send a success response to the client

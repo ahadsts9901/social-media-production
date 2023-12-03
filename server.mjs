@@ -42,7 +42,6 @@ app.use("/api/v1", (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.SECRET);
-        console.log("decoded: ", decoded);
 
         req.body.decoded = {
             ...decoded
