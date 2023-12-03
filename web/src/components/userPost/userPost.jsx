@@ -75,9 +75,20 @@ const UserPost = (props) => {
 
       if (response.data === "Like added successfully") {
         setIsLike(true);
-        // Update the like button
-      } else {
-        // console.log("Failed to add like.");
+        const sentNotification = await axios.post(
+          `${baseUrl}/api/v1/notification`,
+          {
+            fromId: state.user.userId,
+            toId: props.userId,
+            actionId: props.postId,
+            message: `${state.user.firstName} ${state.user.lastName} liked your post`,
+            senderImage: state.user.profileImage,
+            senderName: `${state.user.firstName} ${state.user.lastName}`,
+            location: "likes/post"
+          }
+        );
+
+        console.log("notification sent");
       }
 
       let thumb = event.target.firstElementChild;
@@ -101,10 +112,17 @@ const UserPost = (props) => {
       );
 
       if (response.data === "Like removed successfully") {
-        setIsLike(false); // Update the like button
-      } else {
-        // Handle the case where the undo like API fails
-        // console.log("Failed to remove like.");
+        setIsLike(false);
+        const delNotification = await axios.delete(
+          `${baseUrl}/api/v1/delete/notification`,
+          {
+            data: {
+              fromId: state.user.userId,
+              toId: props.userId,
+              actionId: props.postId,
+            },
+          }
+        );
       }
 
       let thumb = event.target.firstElementChild;
@@ -193,13 +211,12 @@ const UserPost = (props) => {
       </div>
       <div className="textContainer">
         <p
-          className={`${
-            fullText.length <= 40
-              ? props.image
-                ? "smallText"
-                : "bigText"
-              : "smallText"
-          }`}
+          className={`${fullText.length <= 40
+            ? props.image
+              ? "smallText"
+              : "bigText"
+            : "smallText"
+            }`}
         >
           <span
             onClick={() => {
@@ -232,9 +249,8 @@ const UserPost = (props) => {
           }}
         >
           <i
-            className={`bi ${
-              !isLike ? "bi-hand-thumbs-up" : "bi-hand-thumbs-up-fill"
-            }`}
+            className={`bi ${!isLike ? "bi-hand-thumbs-up" : "bi-hand-thumbs-up-fill"
+              }`}
           ></i>
           <span id="likesCount">
             Likes
@@ -262,15 +278,24 @@ const UserPost = (props) => {
         </button>
       </div>
       <div className="buttonContainer">
-        <button
-          className="editDelBtns"
-          onClick={() => props.edit(props.postId)}
-        >
-          <i className="bi bi-pencil-fill"></i>Edit
-        </button>
-        <button className="editDelBtns" onClick={() => props.del(props.postId)}>
-          <i className="bi bi-trash-fill"></i>Delete
-        </button>
+        <>
+          {state.user.userId === props.userId ? (
+            <button
+              className="editDelBtns"
+              onClick={() => props.edit(props.postId)}
+            >
+              <i className="bi bi-pencil-fill"></i>Edit
+            </button>
+          ) : null}
+          {state.user.isAdmin === true || state.user.userId === props.userId ? (
+            <button
+              className="editDelBtns"
+              onClick={() => props.del(props.postId, props.userId)}
+            >
+              <i className="bi bi-trash-fill"></i>Delete
+            </button>
+          ) : null}
+        </>
       </div>
     </div>
   );

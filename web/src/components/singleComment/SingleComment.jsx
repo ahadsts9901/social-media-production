@@ -60,10 +60,20 @@ const SingleComment = (props) => {
 
       if (response.data === "Like added successfully") {
         setIsLike(true);
-        // Update the like button
-      } else {
-        // Handle the case where the API fails
-        console.log("Failed to add like.");
+        const sentNotification = await axios.post(
+          `${baseUrl}/api/v1/notification`,
+          {
+            fromId: state.user.userId,
+            toId: props.userId,
+            actionId: commentId,
+            message: `${state.user.firstName} ${state.user.lastName} liked your comment`,
+            senderImage: state.user.profileImage,
+            senderName: `${state.user.firstName} ${state.user.lastName}`,
+            location: "likes/comment"
+          }
+        );
+
+        console.log("notification sent");
       }
     } catch (error) {
       // Handle error
@@ -83,9 +93,16 @@ const SingleComment = (props) => {
 
       if (response.data === "Like removed successfully") {
         setIsLike(false); // Update the like button
-      } else {
-        // Handle the case where the undo like API fails
-        console.log("Failed to remove like.");
+        const delNotification = await axios.delete(
+          `${baseUrl}/api/v1/delete/notification`,
+          {
+            data: {
+              fromId: state.user.userId,
+              toId: props.userId,
+              actionId: props._id,
+            },
+          }
+        );
       }
     } catch (error) {
       // Handle error

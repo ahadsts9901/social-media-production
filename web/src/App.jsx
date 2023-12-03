@@ -64,9 +64,10 @@ const App = () => {
         });
       }
 
-      // setTimeout(() => {
-      //   setNotifications([])
-      // }, 10000)
+      setTimeout(() => {
+        setNotifications([])
+      }, 5000)
+
     });
 
     return () => {
@@ -183,8 +184,8 @@ const App = () => {
       {state.isLogin === false ? (
         <>
           {window.location.pathname.startsWith("/profile") ||
-          window.location.pathname.startsWith("/post") ||
-          window.location.pathname.startsWith("/likes") ? (
+            window.location.pathname.startsWith("/post") ||
+            window.location.pathname.startsWith("/likes") ? (
             <UnAuthNavbar />
           ) : null}
           <Routes>

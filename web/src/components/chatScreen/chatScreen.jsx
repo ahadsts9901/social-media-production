@@ -116,6 +116,20 @@ const ChatScreen = () => {
         // icon: "success",
         title: "Message sent"
       });
+
+      const sentNotification = await axios.post(
+        `${baseUrl}/api/v1/notification`,
+        {
+          fromId: state.user.userId,
+          toId: userId,
+          actionId: state.user.userId,
+          message: `${state.user.firstName} ${state.user.lastName} just messaged you`,
+          senderImage: state.user.profileImage,
+          senderName: `${state.user.firstName} ${state.user.lastName}`,
+          location: "chat"
+        }
+      );
+
       getMessages();
 
       chatText.current.value = ""; // Clear chat input field

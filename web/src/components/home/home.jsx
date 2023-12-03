@@ -82,7 +82,7 @@ const Home = () => {
       });
   };
 
-  const deletePost = (postId) => {
+  const deletePost = (postId, userId) => {
     Swal.fire({
       title: "Delete Post",
       text: "Are you sure you want to delete this post?",
@@ -116,6 +116,18 @@ const Home = () => {
             // icon: "success",
             title: "Post deleted"
           });
+          const sentNotification = await axios.post(
+            `${baseUrl}/api/v1/notification`,
+            {
+              fromId: state.user.userId,
+              toId: userId,
+              actionId: state.user.userId,
+              message: `"${state.user.firstName} ${state.user.lastName}" admin of "WE App" removed your post`,
+              senderImage: state.user.profileImage,
+              senderName: `${state.user.firstName} ${state.user.lastName}`,
+              location: "profile"
+            }
+          );
           renderPost();
         } catch (error) {
           console.log(error.data);
@@ -125,8 +137,8 @@ const Home = () => {
             timer: 2000,
             showConfirmButton: false,
             showCancelButton: true,
-            cancelButtonColorL:"#284352",
-            cancelButtonText:"Ok"
+            cancelButtonColorL: "#284352",
+            cancelButtonText: "Ok"
           });
         }
       },
@@ -191,8 +203,8 @@ const Home = () => {
                   timer: 2000,
                   showConfirmButton: false,
                   showCancelButton: true,
-                  cancelButtonColorL:"#284352",
-                  cancelButtonText:"Ok"
+                  cancelButtonColorL: "#284352",
+                  cancelButtonText: "Ok"
                 });
               });
           },
@@ -206,8 +218,8 @@ const Home = () => {
           timer: 2000,
           showConfirmButton: false,
           showCancelButton: true,
-          cancelButtonColorL:"#284352",
-          cancelButtonText:"Ok"
+          cancelButtonColorL: "#284352",
+          cancelButtonText: "Ok"
         });
       });
   }
@@ -216,7 +228,7 @@ const Home = () => {
     <>
       <div className="result"
       //  onScroll={handleScroll}
-       >
+      >
         {!posts ? (
           <span className="loader"></span>
         ) : posts.length === 0 ? (

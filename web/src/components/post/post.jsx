@@ -92,6 +92,9 @@ const Post = (props) => {
           toId: props.userId,
           actionId: props.postId,
           message: `${state.user.firstName} ${state.user.lastName} liked your post`,
+          senderImage: state.user.profileImage,
+          senderName: `${state.user.firstName} ${state.user.lastName}`,
+          location: "likes/post"
         }
       );
 
@@ -304,7 +307,7 @@ const Post = (props) => {
           {state.user.isAdmin === true || state.user.userId === props.userId ? (
             <button
               className="editDelBtns"
-              onClick={() => props.del(props.postId)}
+              onClick={() => props.del(props.postId, props.userId)}
             >
               <i className="bi bi-trash-fill"></i>Delete
             </button>
