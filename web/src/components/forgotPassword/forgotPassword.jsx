@@ -39,16 +39,12 @@ const ForgotPassword = () => {
         email: email,
       });
 
-      const otp = response.data.otp;
-
       navigate("/forgot-password-complete", {
-        state: { email: email, otp: otp },
+        state: { email: email },
       });
       
     } catch (error) {
-      setValidationMessage("Email or Password incorrect");
-      console.log("Email or Password incorrect");
-      console.error(error.data);
+      console.error(error);
     }
   };
 

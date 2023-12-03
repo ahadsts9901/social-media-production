@@ -47,16 +47,16 @@ const App = () => {
     });
 
     socket.on("connect", function () {
-      console.log("connected in app.jsx");
+      // console.log("connected in app.jsx");
     });
     socket.on("disconnect", function (message) {
-      console.log("Socket disconnected from server: ", message);
+      // console.log("Socket disconnected from server: ", message);
     });
 
     socket.on(`NOTIFICATIONS`, (e) => {
       const location = window.location.pathname;
 
-      console.log("new item from server: ", location);
+      // console.log("new item from server: ", location);
 
       if (!location.includes("chat")) {
         setNotifications((prev) => {

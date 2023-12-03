@@ -98,7 +98,7 @@ const Post = (props) => {
         }
       );
 
-      console.log("notification sent");
+      // console.log("notification sent");
 
       let thumb = event.target.firstElementChild;
       thumb.classList.remove("bi-hand-thumbs-up");
@@ -135,7 +135,7 @@ const Post = (props) => {
         }
       );      
 
-      console.log("notification deleted");
+      // console.log("notification deleted");
 
       let thumb = event.target.firstElementChild;
       thumb.classList.add("bi-hand-thumbs-up");

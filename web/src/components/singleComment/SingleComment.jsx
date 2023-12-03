@@ -73,7 +73,7 @@ const SingleComment = (props) => {
           }
         );
 
-        console.log("notification sent");
+        // console.log("notification sent");
       }
     } catch (error) {
       // Handle error

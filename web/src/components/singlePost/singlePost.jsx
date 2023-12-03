@@ -313,7 +313,7 @@ const SinglePost = () => {
             );
           }
 
-          console.log("notification deleted");
+          // console.log("notification deleted");
           getComments(postId.postId)
         } catch (error) {
           console.log(error.data);

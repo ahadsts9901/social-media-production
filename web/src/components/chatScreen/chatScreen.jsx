@@ -38,15 +38,15 @@ const ChatScreen = () => {
       const socket = io(baseUrl);
 
       socket.on('connect', function () {
-        console.log("connected")
+        // console.log("connected")
       });
 
       socket.on('disconnect', function (message) {
-        console.log("Socket disconnected from server: ", message);
+        // console.log("Socket disconnected from server: ", message);
       });
 
       socket.on(state.user.userId, async (e) => {
-        console.log("a new message for you: ", e);
+        // console.log("a new message for you: ", e);
 
         try {
           const response = await axios.get(`${baseUrl}/api/v1/messages/${userId}`);

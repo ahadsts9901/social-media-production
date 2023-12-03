@@ -28,7 +28,7 @@ const Notifications = () => {
 
       const response = await axios.get(`${baseUrl}/api/v1/notifications?q=${state.user.userId}`,)
 
-      console.log(response.data);
+      // console.log(response.data);
 
       setNotifications(response.data)
 
@@ -44,7 +44,7 @@ const Notifications = () => {
 
       const delResp = await axios.delete(`${baseUrl}/api/v1/notification/${id}`)
       getNotifications()
-      console.log("deleted");
+      // console.log("deleted");
 
     } catch (error) {
       console.log(error);

@@ -215,7 +215,7 @@ const Profile = () => {
           const passwordElement = document.getElementById(inputId);
           const passwordValue = passwordElement.value.trim();
 
-          console.log("yes");
+          // console.log("yes");
 
           if (passwordValue === "" || passwordValue > 8) {
             passwordElement.classList.add("swal-validation-error");
@@ -523,7 +523,7 @@ const Profile = () => {
           const passwordElement = document.getElementById(inputId);
           const passwordValue = passwordElement.value.trim();
 
-          console.log("yes");
+          // console.log("yes");
 
           if (passwordValue === "" || passwordValue > 8) {
             passwordElement.classList.add("swal-validation-error");

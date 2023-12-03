@@ -55,7 +55,7 @@ const Login = () => {
         payload: response.data.data,
       });
 
-      console.log("login successfully");
+      // console.log("login successfully");
       setSuccessMessage('Login Successfull');
       setValidationMessage("")
       window.location.pathname = "/"

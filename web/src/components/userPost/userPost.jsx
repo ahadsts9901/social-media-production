@@ -88,7 +88,7 @@ const UserPost = (props) => {
           }
         );
 
-        console.log("notification sent");
+        // console.log("notification sent");
       }
 
       let thumb = event.target.firstElementChild;

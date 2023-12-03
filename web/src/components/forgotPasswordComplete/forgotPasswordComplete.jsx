@@ -9,20 +9,21 @@ import { GlobalContext } from "../../context/context";
 import { baseUrl } from "../../core.mjs";
 
 const ForgotPasswordComplete = () => {
+  
   const location = useLocation();
 
-  const otp = location.state.otp;
+  // const otp = location.state.otp;
 
-  useEffect(()=>{
-    Swal.fire({
-      // icon: "info",
-      text: "Your OTP code dont share it",
-      title: otp,
-      showConfirmButton: true,
-      confirmButtonColor: "#284352",
-      confirmButtonText: "Ok",
-    });
-  },[location.state.otp])
+  // useEffect(()=>{
+  //   Swal.fire({
+  //     // icon: "info",
+  //     text: "Your OTP code dont share it",
+  //     title: otp,
+  //     showConfirmButton: true,
+  //     confirmButtonColor: "#284352",
+  //     confirmButtonText: "Ok",
+  //   });
+  // },[location.state.otp])
 
   let { state, dispatch } = useContext(GlobalContext);
 
@@ -73,7 +74,7 @@ const ForgotPasswordComplete = () => {
         }
       );
 
-      console.log("resp: ", response.data.message);
+      // console.log("resp: ", response.data.message);
 
       setSuccessMessage("Password Updated Successfully");
 
@@ -176,7 +177,7 @@ const ForgotPasswordComplete = () => {
           placeholder="Enter 6 Digit Code"
           minLength="6"
           maxLength="6"
-          value={location.state.otp}
+          // value={location.state.otp}
         />
         <p className="validationMessage">{validationMessage}</p>
         <p className="successMessage">{successMessage}</p>
